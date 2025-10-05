@@ -4,6 +4,7 @@ import { useState } from "react";
 import WelcomeModal from "./components/WelcomeModal";
 import Header from "@/components/Header";
 import RegistrationFlow from "./components/RegistrationFlow";
+import Footer from "@/components/Footer";
 
 const Home = () => {
   const [showModal, setShowModal] = useState(true);
@@ -31,6 +32,7 @@ const Home = () => {
 
         <RegistrationFlow />
       </main>
+      <Footer />
     </div>
   );
 };
