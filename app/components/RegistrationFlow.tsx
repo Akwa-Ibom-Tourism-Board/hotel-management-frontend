@@ -79,10 +79,7 @@ const RegistrationFlow = () => {
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [isAnimating, setIsAnimating] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [
-    entityType, 
-    setEntityType
-  ] = useState<EntityType | string>("");
+  const [entityType, setEntityType] = useState<EntityType | string>("");
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
 
   const allQuestions = [...questions.common];
@@ -242,25 +239,35 @@ const RegistrationFlow = () => {
                 Previous
               </div>
             </Button>
-            <Button
-              onClick={handleNext}
-              disabled={!canProceed || currentStep === allQuestions.length - 1}
-              background="#00563b"
+            <div
+              className=""
+              style={{
+                display:
+                  currentStep === allQuestions.length - 1 ? "none" : "block",
+              }}
             >
-              <div className="flex items-center w-[100%] justify-center">
-                Next
-                <ChevronRight className="w-5 h-5 ml-2" />
+              <Button
+                onClick={handleNext}
+                disabled={
+                  !canProceed || currentStep === allQuestions.length - 1
+                }
+                background="#00563b"
+              >
+                <div className="flex items-center w-[100%] justify-center">
+                  Next
+                  <ChevronRight className="w-5 h-5 ml-2" />
+                </div>
+              </Button>
+            </div>
+            {currentStep === allQuestions.length - 1 && canProceed && (
+              <div className="text-center animate-fade-in">
+                <Button background="#e77818">Submit Registration</Button>
               </div>
-            </Button>
+            )}
           </div>
           {/* Submit Button */}
         </Card.Card>
       </div>
-      {currentStep === allQuestions.length - 1 && canProceed && (
-        <div className="mt-6 text-center animate-fade-in">
-          <Button background="#e77818">Submit Registration</Button>
-        </div>
-      )}
     </div>
   );
 };
