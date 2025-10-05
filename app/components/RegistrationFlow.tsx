@@ -1,0 +1,268 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// components/home/RegistrationFlow.tsx
+import { useState } from "react";
+import Button from "./HomeButton";
+import Input from "../../components/Input";
+import Label from "../../components/Label";
+import Card from "../../components/Card";
+import { Select } from "../../components/Select";
+import { Dialog, DialogHeader, DialogTitle } from "./HomeDailogue";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+import PopUpButton from "./PopUpButton";
+
+type EntityType =
+  | "hotel"
+  | "bar"
+  | "restaurant"
+  | "lounge"
+  | "tour_operator"
+  | "travel_agent"
+  | "hospitality_org"
+  | "other";
+
+type Question = {
+  id: string;
+  label: string;
+  type: "text" | "number" | "email" | "tel" | "select";
+  options?: string[];
+};
+
+const entityLabels: Record<EntityType, string> = {
+  hotel: "Hotel",
+  bar: "Bar",
+  restaurant: "Restaurant",
+  lounge: "Lounge",
+  tour_operator: "Tour Operator",
+  travel_agent: "Travel Agent",
+  hospitality_org: "Hospitality Organization",
+  other: "Other",
+};
+
+const questions: {
+  common: Question[];
+  hotel: Question[];
+  restaurant: Question[];
+} = {
+  common: [
+    { id: "entity_type", label: "What are you?", type: "select" },
+    { id: "business_name", label: "What is your business name?", type: "text" },
+    {
+      id: "registration_number",
+      label: "Business phone number",
+      type: "text",
+    },
+    { id: "address", label: "Business address", type: "text" },
+    { id: "phone", label: "Contact phone number", type: "tel" },
+    { id: "email", label: "Contact email address", type: "email" },
+  ],
+  hotel: [
+    { id: "room_count", label: "How many rooms do you have?", type: "number" },
+    {
+      id: "star_rating",
+      label: "Star rating (if applicable)",
+      type: "select",
+      options: ["1", "2", "3", "4", "5"],
+    },
+  ],
+  restaurant: [
+    {
+      id: "cuisine_type",
+      label: "What type of cuisine do you serve?",
+      type: "text",
+    },
+    { id: "seating_capacity", label: "Seating capacity", type: "number" },
+  ],
+};
+
+const RegistrationFlow = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState<"left" | "right">("right");
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [
+    entityType, 
+    setEntityType
+  ] = useState<EntityType | string>("");
+  const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
+
+  const allQuestions = [...questions.common];
+  const currentQuestion = allQuestions[currentStep];
+
+  const handleNext = () => {
+    if (currentStep < allQuestions.length - 1) {
+      setDirection("right");
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsAnimating(false);
+      }, 300);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setDirection("left");
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep - 1);
+        setIsAnimating(false);
+      }, 300);
+    }
+  };
+
+  const handleInputChange = (value: string) => {
+    setFormData({ ...formData, [currentQuestion.id]: value });
+    if (currentQuestion.id === "entity_type") {
+      setEntityType(value as EntityType);
+    }
+  };
+
+  const handleEntitySelect = (value: string) => {
+    setFormData({ ...formData, entity_type: value });
+    setEntityType(value as EntityType);
+    setIsEntityModalOpen(false);
+  };
+
+  const canProceed = formData[currentQuestion.id]?.trim().length > 0;
+
+  return (
+    <div className="w-full max-w-2xl mx-auto px-4">
+      {/* Progress */}
+      <div className="mb-8 text-[#78716e]">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-bold text-muted-foreground">
+            Question {currentStep + 1} of {allQuestions.length}
+          </span>
+          <span className="text-sm text-[#e77818] font-bold text-primary">
+            {Math.round(((currentStep + 1) / allQuestions.length) * 100)}%
+            Complete
+          </span>
+        </div>
+        <div className="w-full bg-[#f2f0ed] h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#e77818] transition-all duration-500 ease-out"
+            style={{
+              width: `${((currentStep + 1) / allQuestions.length) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Question Card */}
+      <div className="relative bg-[#ffff] min-h-[400px]">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-lg" />
+
+        <Card.Card
+          key={currentStep}
+          className={`p-8 shadow-card border-border bg-card relative min-h-[400px] transition-all duration-500 ${
+            isAnimating
+              ? direction === "right"
+                ? "animate-slide-out-left opacity-0"
+                : "animate-slide-out-right opacity-0"
+              : "animate-fade-in opacity-100"
+          }`}
+        >
+          <div className="space-y-6">
+            <Label
+              htmlFor={currentQuestion.id}
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-[#2a2523] font-extrabold block"
+            >
+              {currentQuestion.label}
+            </Label>
+
+            {/* Entity type (custom modal) */}
+            {currentQuestion.id === "entity_type" ? (
+              <>
+                <PopUpButton onClick={() => setIsEntityModalOpen(true)}>
+                  <div className="text-left text-sm sm:text-base md:text-lg lg:text-xl text-[#2a2523] p-2">
+                    {formData[currentQuestion.id]
+                      ? entityLabels[formData[currentQuestion.id] as EntityType]
+                      : "Click to select your business type"}
+                  </div>
+                </PopUpButton>
+
+                <Dialog
+                  open={isEntityModalOpen}
+                  onClose={() => setIsEntityModalOpen(false)}
+                >
+                  <div className="sm:max-w-[600px] bg-card">
+                    <DialogHeader>
+                      <DialogTitle className="text-[24px] text-[#2a2523]">
+                        Select Your Business Type
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      {Object.entries(entityLabels).map(([value, label]) => (
+                        <button
+                          key={value}
+                          onClick={() => handleEntitySelect(value)}
+                          className="p-6 hover:cursor-pointer rounded-lg text-[#2a2523] border-[#e9e1d7] border-2 hover:text-[#e77818] hover:border-[#e77818] hover:bg-[#e77818]/10 transition-all text-left group"
+                        >
+                          <h3 className="text-lg font-semibold transition-colors">
+                            {label}
+                          </h3>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </Dialog>
+              </>
+            ) : currentQuestion.type === "select" && currentQuestion.options ? (
+              <Select
+                value={formData[currentQuestion.id] || ""}
+                onChange={(e) => handleInputChange(e.target.value)}
+                options={currentQuestion.options.map((option) => ({
+                  value: option,
+                  label: `${option} Star${option !== "1" ? "s" : ""}`,
+                }))}
+                className="h-14 text-lg border-2 border-input focus:border-primary focus:ring-primary"
+              />
+            ) : (
+              <Input
+                id={currentQuestion.id}
+                type={currentQuestion.type}
+                value={formData[currentQuestion.id] || ""}
+                onChange={(e) => handleInputChange(e.target.value)}
+                className="w-full h-14 text-lg border-2 border-input bg-white"
+                placeholder="Type your answer here..."
+                autoFocus
+              />
+            )}
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center md:gap-0 gap-6 justify-between flex-col md:flex-row mt-12">
+            <Button
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              background="#00563b"
+            >
+              <div className="flex items-center w-[100%] justify-center">
+                <ChevronLeft className="w-5 h-5 mr-2" />
+                Previous
+              </div>
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed || currentStep === allQuestions.length - 1}
+              background="#00563b"
+            >
+              <div className="flex items-center w-[100%] justify-center">
+                Next
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </div>
+            </Button>
+          </div>
+          {/* Submit Button */}
+        </Card.Card>
+      </div>
+      {currentStep === allQuestions.length - 1 && canProceed && (
+        <div className="mt-6 text-center animate-fade-in">
+          <Button background="#e77818">Submit Registration</Button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RegistrationFlow;
