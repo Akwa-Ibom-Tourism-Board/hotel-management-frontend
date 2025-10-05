@@ -18,12 +18,12 @@ const Home = () => {
 
       <Header />
 
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto py-12 px-2">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl text-[#2a2523] font-bold mb-4">
             Register Your Business
           </h2>
-          <p className="text-lg text-[#78716e] text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-[#78716e] max-w-2xl mx-auto">
             Please complete the registration form below. All fields are required
             for proper documentation.
           </p>
