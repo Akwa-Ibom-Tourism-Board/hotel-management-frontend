@@ -23,7 +23,14 @@ type EntityType =
 type Question = {
   id: string;
   label: string;
-  type: "text" | "number" | "email" | "tel" | "select" | "checkbox-group";
+  type:
+    | "text"
+    | "number"
+    | "email"
+    | "tel"
+    | "select"
+    | "checkbox-group"
+    | "radio";
   options?: string[];
   hasOtherOption?: boolean;
 };
@@ -54,8 +61,45 @@ const questions: {
       label: "Business phone number",
       type: "text",
     },
-    { id: "address", label: "Full Buisness Address", type: "text" },
-    { id: "local_government", label: "Local government where buisness is located", type: "text" },
+    { id: "address", label: "Full Business Address", type: "text" },
+    {
+      id: "local_government",
+      label: "Local government where business is located",
+      type: "radio",
+      options: [
+        "Abak",
+        "Eastern Obolo",
+        "Eket",
+        "Esit Eket",
+        "Essien Udim",
+        "Etim Ekpo",
+        "Etinan",
+        "Ibeno",
+        "Ibesikpo Asutan",
+        "Ibiono Ibom",
+        "Ika",
+        "Ikono",
+        "Ikot Abasi",
+        "Ikot Ekpene",
+        "Ini",
+        "Itu",
+        "Mbo",
+        "Mkpat Enin",
+        "Nsit Atai",
+        "Nsit Ibom",
+        "Nsit Ubium",
+        "Obot Akara",
+        "Okobo",
+        "Onna",
+        "Oron",
+        "Oruk Anam",
+        "Udung Uko",
+        "Ukanafun",
+        "Uruan",
+        "Urue-Offong/Oruko",
+        "Uyo",
+      ],
+    },
     { id: "website", label: "Business website", type: "text" },
     { id: "year_established", label: "Year of establishment", type: "number" },
     { id: "contact_name", label: "Contact name", type: "text" },
@@ -65,12 +109,6 @@ const questions: {
   hotel: [
     { id: "room_count", label: "How many rooms do you have?", type: "number" },
     { id: "bed_spaces", label: "Number of bed spaces", type: "number" },
-    // {
-    //   id: "star_rating",
-    //   label: "Star rating (if applicable)",
-    //   type: "select",
-    //   options: ["1", "2", "3", "4", "5"],
-    // },
     {
       id: "facilities",
       label: "Select all facilities that are available",
@@ -88,11 +126,6 @@ const questions: {
     },
   ],
   restaurant: [
-    // {
-    //   id: "cuisine_type",
-    //   label: "What type of cuisine do you serve?",
-    //   type: "text",
-    // },
     { id: "seating_capacity", label: "Seating capacity", type: "number" },
     {
       id: "service_types",
@@ -146,10 +179,14 @@ const RegistrationFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [isAnimating, setIsAnimating] = useState(false);
-  const [formData, setFormData] = useState<Record<string, string | string[]>>({});
+  const [formData, setFormData] = useState<Record<string, string | string[]>>(
+    {}
+  );
   const [entityType, setEntityType] = useState<EntityType | string>("");
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
+  const [isRadioModalOpen, setIsRadioModalOpen] = useState(false);
   const [otherInputs, setOtherInputs] = useState<Record<string, string>>({});
+  const [tempRadioSelection, setTempRadioSelection] = useState<string>("");
 
   // Get entity-specific questions based on type
   const getEntityQuestions = (entity: string): Question[] => {
@@ -167,10 +204,7 @@ const RegistrationFlow = () => {
     }
   };
 
-  const allQuestions = [
-    ...questions.common,
-    ...getEntityQuestions(entityType),
-  ];
+  const allQuestions = [...questions.common, ...getEntityQuestions(entityType)];
   const currentQuestion = allQuestions[currentStep];
 
   const handleNext = () => {
@@ -221,12 +255,25 @@ const RegistrationFlow = () => {
     setIsEntityModalOpen(false);
   };
 
-  const canProceed = currentQuestion.type === "checkbox-group"
-    ? (formData[currentQuestion.id] as string[])?.length > 0 ||
-      otherInputs[currentQuestion.id]?.trim().length > 0
-    : typeof formData[currentQuestion.id] === "string"
-    ? (formData[currentQuestion.id] as string)?.trim().length > 0
-    : false;
+  const handleRadioSelect = (value: string) => {
+    setTempRadioSelection(value);
+  };
+
+  const handleRadioConfirm = () => {
+    if (tempRadioSelection) {
+      setFormData({ ...formData, [currentQuestion.id]: tempRadioSelection });
+      setIsRadioModalOpen(false);
+      setTempRadioSelection("");
+    }
+  };
+
+  const canProceed =
+    currentQuestion.type === "checkbox-group"
+      ? (formData[currentQuestion.id] as string[])?.length > 0 ||
+        otherInputs[currentQuestion.id]?.trim().length > 0
+      : typeof formData[currentQuestion.id] === "string"
+      ? (formData[currentQuestion.id] as string)?.trim().length > 0
+      : false;
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4">
@@ -310,6 +357,81 @@ const RegistrationFlow = () => {
                   </div>
                 </Dialog>
               </>
+            ) : currentQuestion.type === "radio" ? (
+              <>
+                <PopUpButton
+                  onClick={() => {
+                    setTempRadioSelection(
+                      (formData[currentQuestion.id] as string) || ""
+                    );
+                    setIsRadioModalOpen(true);
+                  }}
+                >
+                  <div className="text-left text-sm sm:text-base md:text-lg lg:text-xl text-[#2a2523] p-2">
+                    {formData[currentQuestion.id]
+                      ? formData[currentQuestion.id]
+                      : "Click to select"}
+                  </div>
+                </PopUpButton>
+
+                <Dialog
+                  open={isRadioModalOpen}
+                  onClose={() => {
+                    setIsRadioModalOpen(false);
+                    setTempRadioSelection("");
+                  }}
+                >
+                  <div className="sm:max-w-[600px] bg-card max-h-[70vh]">
+                    <DialogHeader>
+                      <DialogTitle className="text-[24px] text-[#2a2523]">
+                        {currentQuestion.label}
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-2 mt-4 max-h-[50vh] overflow-y-auto px-2">
+                      {currentQuestion.options?.map((option) => (
+                        <label
+                          key={option}
+                          className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                            tempRadioSelection === option
+                              ? "border-[#e77818] bg-[#e77818]/10"
+                              : "border-[#e9e1d7] hover:border-[#e77818] hover:bg-[#e77818]/5"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name={currentQuestion.id}
+                            value={option}
+                            checked={tempRadioSelection === option}
+                            onChange={(e) => handleRadioSelect(e.target.value)}
+                            className="w-5 h-5 text-[#e77818] border-2 border-[#e9e1d7] focus:ring-[#e77818] cursor-pointer"
+                          />
+                          <span className="text-base text-[#2a2523]">
+                            {option}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex justify-center gap-10">
+                      <Button
+                        onClick={() => {
+                          setIsRadioModalOpen(false);
+                          setTempRadioSelection("");
+                        }}
+                        background="#78716e"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleRadioConfirm}
+                        disabled={!tempRadioSelection}
+                        background="#e77818"
+                      >
+                        Confirm Selection
+                      </Button>
+                    </div>
+                  </div>
+                </Dialog>
+              </>
             ) : currentQuestion.type === "checkbox-group" ? (
               <div className="space-y-3">
                 {currentQuestion.options?.map((option) => (
@@ -319,12 +441,12 @@ const RegistrationFlow = () => {
                   >
                     <input
                       type="checkbox"
-                      checked={
-                        ((formData[currentQuestion.id] as string[]) || []).includes(
-                          option
-                        )
+                      checked={(
+                        (formData[currentQuestion.id] as string[]) || []
+                      ).includes(option)}
+                      onChange={(e) =>
+                        handleCheckboxChange(option, e.target.checked)
                       }
-                      onChange={(e) => handleCheckboxChange(option, e.target.checked)}
                       className="w-5 h-5 rounded border-2 border-[#e9e1d7] text-[#e77818] focus:ring-[#e77818] focus:ring-offset-0 cursor-pointer"
                     />
                     <span className="text-base md:text-lg text-[#2a2523] group-hover:text-[#e77818] transition-colors">
@@ -332,18 +454,19 @@ const RegistrationFlow = () => {
                     </span>
                   </label>
                 ))}
-                
+
                 {currentQuestion.hasOtherOption && (
                   <div className="mt-4">
-                    <label
-                      className="flex items-start space-x-3 p-4 rounded-lg border-2 border-[#e9e1d7] hover:border-[#e77818] hover:bg-[#e77818]/5 transition-all"
-                    >
+                    <label className="flex items-start space-x-3 p-4 rounded-lg border-2 border-[#e9e1d7] hover:border-[#e77818] hover:bg-[#e77818]/5 transition-all">
                       <input
                         type="checkbox"
                         checked={!!otherInputs[currentQuestion.id]}
                         onChange={(e) => {
                           if (!e.target.checked) {
-                            setOtherInputs({ ...otherInputs, [currentQuestion.id]: "" });
+                            setOtherInputs({
+                              ...otherInputs,
+                              [currentQuestion.id]: "",
+                            });
                           }
                         }}
                         className="w-5 h-5 mt-1 rounded border-2 border-[#e9e1d7] text-[#e77818] focus:ring-[#e77818] focus:ring-offset-0 cursor-pointer"
@@ -355,7 +478,9 @@ const RegistrationFlow = () => {
                         <Input
                           type="text"
                           value={otherInputs[currentQuestion.id] || ""}
-                          onChange={(e) => handleOtherInputChange(e.target.value)}
+                          onChange={(e) =>
+                            handleOtherInputChange(e.target.value)
+                          }
                           className="w-full h-12 text-base border-2 border-input bg-white"
                           placeholder="Please specify other options..."
                         />
@@ -366,7 +491,7 @@ const RegistrationFlow = () => {
               </div>
             ) : currentQuestion.type === "select" && currentQuestion.options ? (
               <Select
-                value={formData[currentQuestion.id] as string || ""}
+                value={(formData[currentQuestion.id] as string) || ""}
                 onChange={(e) => handleInputChange(e.target.value)}
                 options={currentQuestion.options.map((option) => ({
                   value: option,
@@ -378,7 +503,7 @@ const RegistrationFlow = () => {
               <Input
                 id={currentQuestion.id}
                 type={currentQuestion.type}
-                value={formData[currentQuestion.id] as string || ""}
+                value={(formData[currentQuestion.id] as string) || ""}
                 onChange={(e) => handleInputChange(e.target.value)}
                 className="w-full h-14 text-lg border-2 border-input bg-white"
                 placeholder="Type your answer here..."
