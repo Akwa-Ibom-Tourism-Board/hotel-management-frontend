@@ -23,8 +23,9 @@ type EntityType =
 type Question = {
   id: string;
   label: string;
-  type: "text" | "number" | "email" | "tel" | "select";
+  type: "text" | "number" | "email" | "tel" | "select" | "checkbox-group";
   options?: string[];
+  hasOtherOption?: boolean;
 };
 
 const entityLabels: Record<EntityType, string> = {
@@ -42,6 +43,8 @@ const questions: {
   common: Question[];
   hotel: Question[];
   restaurant: Question[];
+  lounge: Question[];
+  bar: Question[];
 } = {
   common: [
     { id: "entity_type", label: "What are you?", type: "select" },
@@ -51,26 +54,91 @@ const questions: {
       label: "Business phone number",
       type: "text",
     },
-    { id: "address", label: "Business address", type: "text" },
+    { id: "address", label: "Full Buisness Address", type: "text" },
+    { id: "local_government", label: "Local government where buisness is located", type: "text" },
+    { id: "website", label: "Business website", type: "text" },
+    { id: "year_established", label: "Year of establishment", type: "number" },
+    { id: "contact_name", label: "Contact name", type: "text" },
     { id: "phone", label: "Contact phone number", type: "tel" },
     { id: "email", label: "Contact email address", type: "email" },
   ],
   hotel: [
     { id: "room_count", label: "How many rooms do you have?", type: "number" },
+    { id: "bed_spaces", label: "Number of bed spaces", type: "number" },
+    // {
+    //   id: "star_rating",
+    //   label: "Star rating (if applicable)",
+    //   type: "select",
+    //   options: ["1", "2", "3", "4", "5"],
+    // },
     {
-      id: "star_rating",
-      label: "Star rating (if applicable)",
-      type: "select",
-      options: ["1", "2", "3", "4", "5"],
+      id: "facilities",
+      label: "Select all facilities that are available",
+      type: "checkbox-group",
+      options: [
+        "Board room",
+        "Conference hall",
+        "Swimming pool",
+        "Basketball court",
+        "Table tennis court",
+        "Lawn tennis court",
+        "Internet cyber cafe",
+      ],
+      hasOtherOption: true,
     },
   ],
   restaurant: [
-    {
-      id: "cuisine_type",
-      label: "What type of cuisine do you serve?",
-      type: "text",
-    },
+    // {
+    //   id: "cuisine_type",
+    //   label: "What type of cuisine do you serve?",
+    //   type: "text",
+    // },
     { id: "seating_capacity", label: "Seating capacity", type: "number" },
+    {
+      id: "service_types",
+      label: "Select all types of services you offer",
+      type: "checkbox-group",
+      options: [
+        "Continental dishes",
+        "Local/Nigerian dishes",
+        "Inter-continental dishes",
+        "Chinese",
+        "Indian",
+        "Italian",
+        "Bakery/Pastries",
+        "Fast food",
+        "Seafood",
+        "Grill/BBQ",
+        "Cafe",
+      ],
+      hasOtherOption: true,
+    },
+  ],
+  lounge: [
+    {
+      id: "service_types",
+      label: "Select all types of services you offer",
+      type: "checkbox-group",
+      options: [
+        "Continental dishes",
+        "Local dishes",
+        "Inter-continental dishes",
+      ],
+      hasOtherOption: true,
+    },
+  ],
+  bar: [
+    {
+      id: "service_types",
+      label: "Select all types of services you offer",
+      type: "checkbox-group",
+      options: [
+        "Continental dishes",
+        "Local dishes",
+        "Inter-continental dishes",
+      ],
+      hasOtherOption: true,
+    },
   ],
 };
 
@@ -78,11 +146,31 @@ const RegistrationFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [isAnimating, setIsAnimating] = useState(false);
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<Record<string, string | string[]>>({});
   const [entityType, setEntityType] = useState<EntityType | string>("");
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
+  const [otherInputs, setOtherInputs] = useState<Record<string, string>>({});
 
-  const allQuestions = [...questions.common];
+  // Get entity-specific questions based on type
+  const getEntityQuestions = (entity: string): Question[] => {
+    switch (entity) {
+      case "hotel":
+        return questions.hotel;
+      case "restaurant":
+        return questions.restaurant;
+      case "lounge":
+        return questions.lounge;
+      case "bar":
+        return questions.bar;
+      default:
+        return [];
+    }
+  };
+
+  const allQuestions = [
+    ...questions.common,
+    ...getEntityQuestions(entityType),
+  ];
   const currentQuestion = allQuestions[currentStep];
 
   const handleNext = () => {
@@ -107,11 +195,24 @@ const RegistrationFlow = () => {
     }
   };
 
-  const handleInputChange = (value: string) => {
+  const handleInputChange = (value: string | string[]) => {
     setFormData({ ...formData, [currentQuestion.id]: value });
     if (currentQuestion.id === "entity_type") {
       setEntityType(value as EntityType);
+      setCurrentStep(0); // Reset to first question when entity type changes
     }
+  };
+
+  const handleCheckboxChange = (option: string, checked: boolean) => {
+    const currentValues = (formData[currentQuestion.id] as string[]) || [];
+    const newValues = checked
+      ? [...currentValues, option]
+      : currentValues.filter((v) => v !== option);
+    handleInputChange(newValues);
+  };
+
+  const handleOtherInputChange = (value: string) => {
+    setOtherInputs({ ...otherInputs, [currentQuestion.id]: value });
   };
 
   const handleEntitySelect = (value: string) => {
@@ -120,7 +221,12 @@ const RegistrationFlow = () => {
     setIsEntityModalOpen(false);
   };
 
-  const canProceed = formData[currentQuestion.id]?.trim().length > 0;
+  const canProceed = currentQuestion.type === "checkbox-group"
+    ? (formData[currentQuestion.id] as string[])?.length > 0 ||
+      otherInputs[currentQuestion.id]?.trim().length > 0
+    : typeof formData[currentQuestion.id] === "string"
+    ? (formData[currentQuestion.id] as string)?.trim().length > 0
+    : false;
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4">
@@ -204,9 +310,63 @@ const RegistrationFlow = () => {
                   </div>
                 </Dialog>
               </>
+            ) : currentQuestion.type === "checkbox-group" ? (
+              <div className="space-y-3">
+                {currentQuestion.options?.map((option) => (
+                  <label
+                    key={option}
+                    className="flex items-center space-x-3 p-4 rounded-lg border-2 border-[#e9e1d7] hover:border-[#e77818] hover:bg-[#e77818]/5 transition-all cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={
+                        ((formData[currentQuestion.id] as string[]) || []).includes(
+                          option
+                        )
+                      }
+                      onChange={(e) => handleCheckboxChange(option, e.target.checked)}
+                      className="w-5 h-5 rounded border-2 border-[#e9e1d7] text-[#e77818] focus:ring-[#e77818] focus:ring-offset-0 cursor-pointer"
+                    />
+                    <span className="text-base md:text-lg text-[#2a2523] group-hover:text-[#e77818] transition-colors">
+                      {option}
+                    </span>
+                  </label>
+                ))}
+                
+                {currentQuestion.hasOtherOption && (
+                  <div className="mt-4">
+                    <label
+                      className="flex items-start space-x-3 p-4 rounded-lg border-2 border-[#e9e1d7] hover:border-[#e77818] hover:bg-[#e77818]/5 transition-all"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!!otherInputs[currentQuestion.id]}
+                        onChange={(e) => {
+                          if (!e.target.checked) {
+                            setOtherInputs({ ...otherInputs, [currentQuestion.id]: "" });
+                          }
+                        }}
+                        className="w-5 h-5 mt-1 rounded border-2 border-[#e9e1d7] text-[#e77818] focus:ring-[#e77818] focus:ring-offset-0 cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <span className="text-base md:text-lg text-[#2a2523] block mb-2">
+                          Other (please specify)
+                        </span>
+                        <Input
+                          type="text"
+                          value={otherInputs[currentQuestion.id] || ""}
+                          onChange={(e) => handleOtherInputChange(e.target.value)}
+                          className="w-full h-12 text-base border-2 border-input bg-white"
+                          placeholder="Please specify other options..."
+                        />
+                      </div>
+                    </label>
+                  </div>
+                )}
+              </div>
             ) : currentQuestion.type === "select" && currentQuestion.options ? (
               <Select
-                value={formData[currentQuestion.id] || ""}
+                value={formData[currentQuestion.id] as string || ""}
                 onChange={(e) => handleInputChange(e.target.value)}
                 options={currentQuestion.options.map((option) => ({
                   value: option,
@@ -218,7 +378,7 @@ const RegistrationFlow = () => {
               <Input
                 id={currentQuestion.id}
                 type={currentQuestion.type}
-                value={formData[currentQuestion.id] || ""}
+                value={formData[currentQuestion.id] as string || ""}
                 onChange={(e) => handleInputChange(e.target.value)}
                 className="w-full h-14 text-lg border-2 border-input bg-white"
                 placeholder="Type your answer here..."

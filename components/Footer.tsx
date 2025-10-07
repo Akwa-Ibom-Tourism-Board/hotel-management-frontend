@@ -45,7 +45,7 @@ const Footer = () => {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-200">
-                  123 Tourism Avenue, Uyo, Akwa Ibom State, Nigeria
+                  Plot 57, H-Line, Ewet Housing, Uyo, Akwa Ibom State, Nigeria
                 </span>
               </div>
               <div className="flex items-center gap-3">

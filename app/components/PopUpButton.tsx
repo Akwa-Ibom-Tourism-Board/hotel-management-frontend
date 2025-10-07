@@ -35,7 +35,7 @@ const PopUpButton: React.FC<PopUpButtonProps> = ({
   paddingRight,
   width = "100%",
   disabled,
-//   border="2px solid #ede6de",
+  //   border="2px solid #ede6de",
   type,
   isShadowShow,
   color = "white",
@@ -45,9 +45,11 @@ const PopUpButton: React.FC<PopUpButtonProps> = ({
 }) => {
   return (
     <button
-      className={`border-2 border-[#ede6de] ${!disabled ? "hover:cursor-pointer hover:bg-[#e77818]/40 hover:border-[#e77818]" : ""} ${
-        isShadowShow && "shadow-[0_4px_0_0_rgba(0,0,0,0.2)]"
-      }
+      className={`border-2 border-[#ede6de] ${
+        !disabled
+          ? "hover:cursor-pointer hover:bg-[#e77818]/40 hover:border-[#e77818]"
+          : ""
+      } ${isShadowShow && "shadow-[0_4px_0_0_rgba(0,0,0,0.2)]"}
       ${
         !disabled && isShadowShow
           ? `hover:shadow-[0_2px_0_0_rgba(0,0,0,0.2)] hover:bg-[#e77818]`
