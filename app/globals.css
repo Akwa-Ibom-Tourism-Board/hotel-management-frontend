@@ -19,6 +19,14 @@
   }
 }
 
+.custom-alerts {
+  z-index: 2000 !important;
+  margin-top: 200px !important;
+  margin-left: 300px !important;
+  position: absolute !important;
+  /* background-color: "red" !important; */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

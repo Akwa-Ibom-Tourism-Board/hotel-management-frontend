@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import WelcomeModal from "./components/WelcomeModal";
+import WelcomeModal from "../components/HomeComponents/WelcomeModal";
 import Header from "@/components/Header";
-import RegistrationFlow from "./components/RegistrationFlow";
+import RegistrationFlow from "../components/HomeComponents/RegistrationFlow";
 import Footer from "@/components/Footer";
 
 const Home = () => {
@@ -19,7 +19,7 @@ const Home = () => {
 
       <Header />
 
-      <main className="container mx-auto py-12 px-2">
+      <main className="container mx-auto mb-20 py-12 px-2">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl text-[#2a2523] font-bold mb-4">
             Register Your Business

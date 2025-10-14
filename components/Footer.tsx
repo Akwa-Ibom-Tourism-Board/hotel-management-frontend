@@ -11,7 +11,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative text-white mt-20 py-12 min-h-[400px] bottom-0 w-full">
+    <footer className="relative text-white py-12 min-h-[400px] bottom-0 w-full">
       {/* Background Image Layer */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-60"

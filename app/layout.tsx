@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./globals.css";
+import { Alerts } from "next-alert";
+import { Providers } from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <Providers>
+          {children}
+          <div className="custom-alerts">
+            <Alerts position="top-left" direction="left" timer={6000} />
+          </div>
+        </Providers>
       </body>
     </html>
   );

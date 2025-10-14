@@ -4,7 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./HomeDailogue";
-import Button from "../components/HomeButton";
+import Button from "@/components/HomeComponents/HomeButton";
 
 interface WelcomeModalProps {
   open: boolean;
@@ -20,11 +20,10 @@ const WelcomeModal = ({ open, onContinue, onClose }: WelcomeModalProps) => {
           Welcome to Akwa Ibom State Hotel and Tourism Board Portal
         </DialogTitle>
         <DialogDescription className="text-base text-center sm:text-lg md:text-xl text-[#78716e] leading-relaxed text-muted-foreground">
-          As part of its mandate to register hotels, the Akwa Ibom State Hotel
-          and Tourism Board seeks to capture the information of all hospitality
-          establishments. It is mandatory that all hotels, bars, restaurants,
-          lounges, tour operators, travel agents, and hospitality organizations
-          register.
+          As part of its mandate to register and regulate all hospitality
+          establishments, the Akwa Ibom State Hotel and Tourism Board seeks to
+          capture all information of these establishments. It is mandatory that
+          all hospitality establishments log on to this portal and register.
         </DialogDescription>
       </DialogHeader>
 
