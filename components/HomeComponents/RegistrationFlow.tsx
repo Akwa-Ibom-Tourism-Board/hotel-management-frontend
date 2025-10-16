@@ -559,7 +559,7 @@ const RegistrationFlow = () => {
           addAlert(
             "Error",
             error?.response?.data?.message ||
-              "An error occurred during registration",
+              "An error occurred during registration, please try again. If error persists, please contact admin.",
             "error"
           );
         },
