@@ -547,7 +547,6 @@ const RegistrationFlow = () => {
     try {
       await registerEstablishments(submissionData, {
         onSuccess: (data) => {
-          console.log("Registration successful:", data);
           addAlert(
             "Success!",
             "Registration successful! An email has been sent to the emails you provided. Please check your email for further information.",
