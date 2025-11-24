@@ -1,60 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  useMutation,
-  // useQueryClient 
-} from "@tanstack/react-query";
-// import { queryKeys } from './queryKeys';
-import { registerEstablishments } from './api';
-// import {toast} from 'react-toastify';
-
+import { useMutation } from "@tanstack/react-query";
+import { registerEstablishments, verifyEstablishmentOtp, sendEstablishmentOtp } from "./api";
 
 export function useRegisterEstablishments() {
-  // const queryClient = useQueryClient();
   return useMutation({
     mutationFn: registerEstablishments,
-    onSuccess: async (
-      // data
-    ) => {
-      //   toast.success(data?.message || "Service Request Created Successfully");
-      // queryClient.invalidateQueries({queryKey: queryKeys.getTenantServiceRequests(data.property_id)});
-    },
+    onSuccess: async () => {},
     onError: (error: any) => {
-      console.error('Error Registering User:', error);
-      //   toast.error(error?.response?.data?.message || "Error creating space");
+      console.error("Error Registering Establishment:", error);
     },
   });
 }
 
-// export function useVerifyUserEmail() {
-//   // const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: verifyUserOtp,
-//     onSuccess: async (
-//       // data
-//     ) => {
-//       //   toast.success(data?.message || "Service Request Created Successfully");
-//       // queryClient.invalidateQueries({queryKey: queryKeys.getTenantServiceRequests(data.property_id)});
-//     },
-//     onError: (error: any) => {
-//       console.error('Error verifying email address:', error);
-//       //   toast.error(error?.response?.data?.message || "Error creating space");
-//     },
-//   });
-// }
+export function useVerifyBusinessPhoneNumber() {
+  return useMutation({
+    mutationFn: verifyEstablishmentOtp,
+    onSuccess: async () => {},
+    onError: (error: any) => {
+      console.error("Error verifying phone number:", error);
+    },
+  });
+}
 
-// export function useResendVerificationOtp() {
-//   // const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: resendUserOtp,
-//     onSuccess: async (
-//       // data
-//     ) => {
-//       //   toast.success(data?.message || "Service Request Created Successfully");
-//       // queryClient.invalidateQueries({queryKey: queryKeys.getTenantServiceRequests(data.property_id)});
-//     },
-//     onError: (error: any) => {
-//       console.error('Error creating Service Request:', error);
-//       //   toast.error(error?.response?.data?.message || "Error creating space");
-//     },
-//   });
-// }
+export function useSendVerificationOtp() {
+  return useMutation({
+    mutationFn: sendEstablishmentOtp,
+    onSuccess: async () => {},
+    onError: (error: any) => {
+      console.error("Error sending OTP:", error);
+    },
+  });
+}

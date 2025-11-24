@@ -566,7 +566,11 @@ const RegistrationFlow = () => {
       });
     } catch (error) {
       console.error("Submission error:", error);
-      addAlert("Error", "Submission failed. Please try again. If error persists, please contact admin.", "error");
+      addAlert(
+        "Error",
+        "Submission failed. Please try again. If error persists, please contact admin.",
+        "error"
+      );
     }
   };
 
