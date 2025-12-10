@@ -50,7 +50,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm text-gray-200">+234 811 566 2760</span>
+                <span className="text-sm text-gray-200">+234 703 072 1184</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 flex-shrink-0" />
@@ -60,7 +60,6 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
           {/* Column 3: Our Socials */}
           <div>
             <h3 className="text-lg font-bold mb-4">Our Socials</h3>
