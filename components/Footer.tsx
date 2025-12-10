@@ -50,12 +50,12 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm text-gray-200">+234 123 456 7890</span>
+                <span className="text-sm text-gray-200">+234 811 566 2760</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 flex-shrink-0" />
                 <span className="text-sm text-gray-200">
-                  info@akwaibomtourism.com
+                   info.akhtb@gmail.com
                 </span>
               </div>
             </div>
