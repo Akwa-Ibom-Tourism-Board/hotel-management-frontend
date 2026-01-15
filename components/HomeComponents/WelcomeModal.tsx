@@ -29,7 +29,7 @@ const WelcomeModal = ({ open, onContinue, onClose }: WelcomeModalProps) => {
             />
           </div>
           <DialogTitle className="text-xl sm:text-2xl text-center md:text-3xl text-[#2a2523] font-bold">
-            Welcome to Akwa Ibom State Hotel and Tourism Board Portal
+            Welcome to Akwa Ibom State Hotels and Tourism Board Portal
           </DialogTitle>
           <div>
             <Image
@@ -44,7 +44,7 @@ const WelcomeModal = ({ open, onContinue, onClose }: WelcomeModalProps) => {
         </section>
         <DialogDescription className="text-base text-center sm:text-md md:text-lg text-[#78716e] leading-relaxed text-muted-foreground">
           As part of its mandate to register and regulate all hospitality
-          establishments, the Akwa Ibom State Hotel and Tourism Board seeks to
+          establishments, the Akwa Ibom State Hotels and Tourism Board seeks to
           capture all information of these establishments. <br /> It is
           mandatory that all hospitality establishments operating a business in
           Akwa Ibom State log on to this portal and register their hospitality
