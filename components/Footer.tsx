@@ -86,7 +86,7 @@ const Footer = () => {
         {/* Bottom Section - Copyright */}
         <div className="text-center">
           <p className="text-sm text-gray-200">
-            &copy; {new Date().getFullYear()} Akwa Ibom Tourism Board. All
+            &copy; {new Date().getFullYear()} Akwa Ibom State Hotels and Tourism Development Commission. All
             rights reserved.
           </p>
         </div>

@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Akwa Ibom State Hotels and Tourism Board Registration Portal",
-  description: "Akwa Ibom State Hotels and Tourism Board Registration Portal",
+  title: "Akwa Ibom State Hotels and Tourism Development Commission Registration Portal",
+  description: "Akwa Ibom State Hotels and Tourism Development Commission Registration Portal",
   icons: {
     icon: '/logo-favicon.png',
   }

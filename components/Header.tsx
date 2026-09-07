@@ -18,7 +18,7 @@ const Header = () => {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#2a2523]">
-              Akwa Ibom State Hotels and Tourism Board
+              Akwa Ibom State Hotels and Tourism Development Commission
             </h1>
             <p className="text-sm text-[#78716e]">
               Hospitality Registration Portal
