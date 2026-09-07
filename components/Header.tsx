@@ -9,10 +9,10 @@ const Header = () => {
           <div className="flex items-center justify-center w-30 h-20 rounded-xl shadow-glow">
             {/* <Building2 className="w-8 h-8 text-[#ffffff]" /> */}
             <Image
-              src="/board-new-logo-2.png"
+              src="/akhtdc-new-logo-no-bg.png"
               alt="Akwa Ibom Logo"
-              width={200}
-              height={200}
+              width={100}
+              height={100}
               className="p-0 object-fill"
             />
           </div>
