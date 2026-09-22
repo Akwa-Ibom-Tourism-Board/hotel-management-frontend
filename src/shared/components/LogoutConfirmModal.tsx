@@ -28,7 +28,6 @@ const Actions = styled.div`
 
 const ActionButton = styled(Button)`
   flex: 1;
-  width: 100%;
   min-height: 3rem;
 `;
 
@@ -52,10 +51,10 @@ export const LogoutConfirmModal = ({ open, isLoggingOut, onCancel, onConfirm }: 
       <DialogTitle>Log out and exit?</DialogTitle>
       <DialogDescription>You will need to log in again to access your dashboard.</DialogDescription>
       <Actions>
-        <ActionButton variant="outline" onClick={onCancel} disabled={isLoggingOut}>
+        <ActionButton variant="outline" fullWidth onClick={onCancel} disabled={isLoggingOut}>
           Stay Logged In
         </ActionButton>
-        <ActionButton variant="secondary" onClick={onConfirm} disabled={isLoggingOut}>
+        <ActionButton variant="secondary" fullWidth onClick={onConfirm} disabled={isLoggingOut}>
           {isLoggingOut ? (
             <>
               <Spin size={18} /> Logging out...

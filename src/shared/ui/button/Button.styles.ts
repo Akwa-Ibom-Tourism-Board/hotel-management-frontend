@@ -86,7 +86,10 @@ export const StyledButton = styled.button<{ $variant: ButtonVariant; $size: Butt
   justify-content: center;
   gap: 0.5rem;
   white-space: nowrap;
-  border-radius: ${({ theme }) => theme.radii.full};
+  // Full-width buttons stretch far past their height, so a fully rounded
+  // pill (radii.full) reads as an oversized stadium shape rather than a
+  // button; fall back to the same rounding the form controls use instead.
+  border-radius: ${({ theme, $fullWidth }) => ($fullWidth ? theme.radii.lg : theme.radii.full)};
   border: none;
   font-size: 0.875rem;
   font-weight: 600;

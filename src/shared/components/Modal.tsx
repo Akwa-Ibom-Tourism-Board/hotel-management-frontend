@@ -85,14 +85,14 @@ export const Modal = ({
       {children}
       <Actions>
         {showOneButton ? (
-          <Button style={{ width: "100%" }} onClick={onProceed ?? onClose}>
+          <Button fullWidth onClick={onProceed ?? onClose}>
             {proceedText}
           </Button>
         ) : (
           <>
             <Button
               variant="outline"
-              style={{ flex: 1 }}
+              fullWidth
               onClick={() => {
                 onCancel?.();
                 onClose();
@@ -100,7 +100,7 @@ export const Modal = ({
             >
               {cancelText}
             </Button>
-            <Button style={{ flex: 1 }} onClick={() => onProceed?.()}>
+            <Button fullWidth onClick={() => onProceed?.()}>
               {proceedText}
             </Button>
           </>

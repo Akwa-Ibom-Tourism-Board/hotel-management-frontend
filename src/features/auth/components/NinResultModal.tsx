@@ -91,10 +91,10 @@ export const NinResultModal = ({ open, result, onContinue, onChangeNin }: NinRes
         </DetailsList>
 
         <Actions>
-          <Button variant="outline" style={{ flex: 1 }} onClick={onChangeNin} type="button">
+          <Button variant="outline" fullWidth onClick={onChangeNin} type="button">
             Change NIN
           </Button>
-          <Button style={{ flex: 1 }} onClick={onContinue} type="button">
+          <Button fullWidth onClick={onContinue} type="button">
             Continue
           </Button>
         </Actions>
