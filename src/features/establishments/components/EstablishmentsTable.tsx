@@ -1,14 +1,35 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Building2, ChevronRight } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import type { Establishment } from "../api/types";
 
+const OuterWrap = styled.div`
+  position: relative;
+`;
+
 const TableWrap = styled.div`
   overflow-x: auto;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.xl};
   background: ${({ theme }) => theme.colors.card};
+`;
+
+// Signals there is more of the table to scroll to on narrow screens,
+// where the last couple of columns would otherwise be cut off with no
+// hint that they're reachable.
+const ScrollFade = styled.div<{ $visible: boolean }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2.5rem;
+  border-radius: 0 ${({ theme }) => theme.radii.xl} ${({ theme }) => theme.radii.xl} 0;
+  background: linear-gradient(to right, transparent, ${({ theme }) => theme.alpha(theme.colors.foreground, 0.14)});
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity ${({ theme }) => theme.transitions.fast};
+  pointer-events: none;
 `;
 
 const Table = styled.table`
@@ -94,6 +115,26 @@ interface EstablishmentsTableProps {
 }
 
 export const EstablishmentsTable = ({ establishments }: EstablishmentsTableProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showFade, setShowFade] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return undefined;
+
+    const updateFade = () => {
+      setShowFade(el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+    };
+
+    updateFade();
+    el.addEventListener("scroll", updateFade, { passive: true });
+    window.addEventListener("resize", updateFade);
+    return () => {
+      el.removeEventListener("scroll", updateFade);
+      window.removeEventListener("resize", updateFade);
+    };
+  }, [establishments]);
+
   if (establishments.length === 0) {
     return (
       <TableWrap>
@@ -106,43 +147,46 @@ export const EstablishmentsTable = ({ establishments }: EstablishmentsTableProps
   }
 
   return (
-    <TableWrap>
-      <Table>
-        <Thead>
-          <tr>
-            <Th>Business Name</Th>
-            <Th>Type</Th>
-            <Th>Local Government</Th>
-            <Th>Branches</Th>
-            <Th>Status</Th>
-            <Th aria-hidden />
-          </tr>
-        </Thead>
-        <tbody>
-          {establishments.map((establishment) => (
-            <Row key={establishment.id}>
-              <Td>
-                <NameCell to={`/dashboard/establishments/${establishment.id}`}>{establishment.businessName}</NameCell>
-              </Td>
-              <Td>
-                <TypeText>{establishment.entityType.replace(/_/g, " ")}</TypeText>
-              </Td>
-              <Td>{establishment.localGovernment}</Td>
-              <Td>
-                <BranchCount>{establishment.branches?.length ?? 0}</BranchCount>
-              </Td>
-              <Td>
-                <StatusBadge status={establishment.registrationStatus} />
-              </Td>
-              <ChevronCell>
-                <Link to={`/dashboard/establishments/${establishment.id}`} aria-label={`View ${establishment.businessName}`}>
-                  <ChevronRight size={16} />
-                </Link>
-              </ChevronCell>
-            </Row>
-          ))}
-        </tbody>
-      </Table>
-    </TableWrap>
+    <OuterWrap>
+      <TableWrap ref={scrollRef}>
+        <Table>
+          <Thead>
+            <tr>
+              <Th>Business Name</Th>
+              <Th>Type</Th>
+              <Th>Local Government</Th>
+              <Th>Branches</Th>
+              <Th>Status</Th>
+              <Th aria-hidden />
+            </tr>
+          </Thead>
+          <tbody>
+            {establishments.map((establishment) => (
+              <Row key={establishment.id}>
+                <Td>
+                  <NameCell to={`/dashboard/establishments/${establishment.id}`}>{establishment.businessName}</NameCell>
+                </Td>
+                <Td>
+                  <TypeText>{establishment.entityType.replace(/_/g, " ")}</TypeText>
+                </Td>
+                <Td>{establishment.localGovernment}</Td>
+                <Td>
+                  <BranchCount>{establishment.branches?.length ?? 0}</BranchCount>
+                </Td>
+                <Td>
+                  <StatusBadge status={establishment.registrationStatus} />
+                </Td>
+                <ChevronCell>
+                  <Link to={`/dashboard/establishments/${establishment.id}`} aria-label={`View ${establishment.businessName}`}>
+                    <ChevronRight size={16} />
+                  </Link>
+                </ChevronCell>
+              </Row>
+            ))}
+          </tbody>
+        </Table>
+      </TableWrap>
+      <ScrollFade $visible={showFade} />
+    </OuterWrap>
   );
 };
