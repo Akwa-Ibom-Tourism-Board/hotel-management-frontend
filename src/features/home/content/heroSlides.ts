@@ -1,5 +1,5 @@
 import onePortalImg from "@/assets/hero-one-portal.webp";
-import boardLogoImg from "@/assets/akhtdc-new-logo-no-bg.png";
+import boardLogoImg from "@/assets/akwa-ibom-logo-main.png";
 import governorImg from "@/assets/governor.webp";
 import stateLogoImg from "@/assets/akwa-ibom-logo-main.png";
 import manageBranchesImg from "@/assets/hero-manage-branches.webp";

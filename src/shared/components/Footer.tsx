@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, ArrowUp } from "lucide-react";
 import { Container } from "./Container";
-import logo from "@/assets/akhtdc-new-logo-no-bg.png";
+import logo from "@/assets/akwa-ibom-logo-main.png";
 import {
   FooterEl,
   Grid,

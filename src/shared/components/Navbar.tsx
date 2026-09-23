@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { useThemeMode } from "@/theme";
-import logo from "@/assets/akhtdc-new-logo-no-bg.png";
+import logo from "@/assets/akwa-ibom-logo-main.png";
 import {
   Nav,
   Inner,
