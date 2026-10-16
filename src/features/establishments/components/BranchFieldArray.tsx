@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button, Input, Select, FormField } from "@/shared/ui";
 import { localGovernments } from "@/shared/content";
 import { getFieldError } from "../lib/fieldPath";
+import { Grid, WideField } from "./EstablishmentForm.styles";
 
 const Wrap = styled.div`
   margin-top: 0.5rem;
@@ -113,42 +114,48 @@ export const BranchFieldArray = ({ namePrefix = "" }: BranchFieldArrayProps) => 
               </RemoveButton>
             </BranchCardHeader>
 
-            <FormField label="Branch Name" optional hint="Type the full name; avoid abbreviations, for example write International instead of Intl.">
-              <Input {...register(branchPath("businessName"))} />
-            </FormField>
+            <Grid>
+              <WideField>
+                <FormField label="Branch Name" optional hint="Type the full name; avoid abbreviations, for example write International instead of Intl.">
+                  <Input {...register(branchPath("businessName"))} />
+                </FormField>
+              </WideField>
 
-            <FormField label="Address" required error={getFieldError(errors, branchPath("address"))}>
-              <Input {...register(branchPath("address"))} />
-            </FormField>
+              <WideField>
+                <FormField label="Address" required error={getFieldError(errors, branchPath("address"))}>
+                  <Input {...register(branchPath("address"))} />
+                </FormField>
+              </WideField>
 
-            <FormField label="Local Government" required error={getFieldError(errors, branchPath("localGovernment"))}>
-              <Select {...register(branchPath("localGovernment"))} defaultValue="">
-                <option value="" disabled>
-                  Select local government
-                </option>
-                {localGovernments.map((lg) => (
-                  <option key={lg} value={lg}>
-                    {lg}
+              <FormField label="Local Government" required error={getFieldError(errors, branchPath("localGovernment"))}>
+                <Select {...register(branchPath("localGovernment"))} defaultValue="">
+                  <option value="" disabled>
+                    Select local government
                   </option>
-                ))}
-              </Select>
-            </FormField>
+                  {localGovernments.map((lg) => (
+                    <option key={lg} value={lg}>
+                      {lg}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
 
-            <FormField label="Branch Phone Number" required error={getFieldError(errors, branchPath("businessPhoneNumber"))}>
-              <Input type="tel" {...register(branchPath("businessPhoneNumber"))} />
-            </FormField>
+              <FormField label="Branch Phone Number" required error={getFieldError(errors, branchPath("businessPhoneNumber"))}>
+                <Input type="tel" {...register(branchPath("businessPhoneNumber"))} />
+              </FormField>
 
-            <FormField label="Contact Name" required error={getFieldError(errors, branchPath("contactName"))}>
-              <Input {...register(branchPath("contactName"))} />
-            </FormField>
+              <FormField label="Contact Name" required error={getFieldError(errors, branchPath("contactName"))}>
+                <Input {...register(branchPath("contactName"))} />
+              </FormField>
 
-            <FormField label="Contact Phone Number" required error={getFieldError(errors, branchPath("contactPhoneNumber"))}>
-              <Input type="tel" {...register(branchPath("contactPhoneNumber"))} />
-            </FormField>
+              <FormField label="Contact Phone Number" required error={getFieldError(errors, branchPath("contactPhoneNumber"))}>
+                <Input type="tel" {...register(branchPath("contactPhoneNumber"))} />
+              </FormField>
 
-            <FormField label="Contact Email" required error={getFieldError(errors, branchPath("contactEmail"))}>
-              <Input type="email" {...register(branchPath("contactEmail"))} />
-            </FormField>
+              <FormField label="Contact Email" required error={getFieldError(errors, branchPath("contactEmail"))}>
+                <Input type="email" {...register(branchPath("contactEmail"))} />
+              </FormField>
+            </Grid>
           </BranchCard>
         );
       })}

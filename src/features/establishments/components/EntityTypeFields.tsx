@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form";
 import { FormField, Input, Checkbox } from "@/shared/ui";
 import { HOTEL_LIKE_TYPES, DINING_LIKE_TYPES, hotelFacilityOptions, diningServiceTypeOptions, type EntityTypeValue } from "@/shared/content";
 import { getFieldError } from "../lib/fieldPath";
+import { Grid, WideField } from "./EstablishmentForm.styles";
 
 const OptionsGrid = styled.div`
   display: grid;
@@ -36,48 +37,52 @@ export const EntityTypeFields = ({ entityType, namePrefix = "" }: EntityTypeFiel
 
   if (HOTEL_LIKE_TYPES.includes(entityType)) {
     return (
-      <>
+      <Grid>
         <FormField label="Room Count" required error={getFieldError(errors, path("roomCount"))}>
           <Input type="number" min={1} {...register(path("roomCount"))} />
         </FormField>
         <FormField label="Bed Spaces" required error={getFieldError(errors, path("bedSpaces"))}>
           <Input type="number" min={1} {...register(path("bedSpaces"))} />
         </FormField>
-        <FormField label="Facilities" optional>
-          <OptionsGrid>
-            {hotelFacilityOptions.map((facility) => (
-              <Checkbox
-                key={facility}
-                label={facility}
-                checked={selectedFacilities.includes(facility)}
-                onChange={() => toggleValue(facilitiesPath, selectedFacilities, facility)}
-              />
-            ))}
-          </OptionsGrid>
-        </FormField>
-      </>
+        <WideField>
+          <FormField label="Facilities" optional>
+            <OptionsGrid>
+              {hotelFacilityOptions.map((facility) => (
+                <Checkbox
+                  key={facility}
+                  label={facility}
+                  checked={selectedFacilities.includes(facility)}
+                  onChange={() => toggleValue(facilitiesPath, selectedFacilities, facility)}
+                />
+              ))}
+            </OptionsGrid>
+          </FormField>
+        </WideField>
+      </Grid>
     );
   }
 
   if (DINING_LIKE_TYPES.includes(entityType)) {
     return (
-      <>
+      <Grid>
         <FormField label="Seating Capacity" required error={getFieldError(errors, path("seatingCapacity"))}>
           <Input type="number" min={1} {...register(path("seatingCapacity"))} />
         </FormField>
-        <FormField label="Service Types" optional>
-          <OptionsGrid>
-            {diningServiceTypeOptions.map((type) => (
-              <Checkbox
-                key={type}
-                label={type}
-                checked={selectedServiceTypes.includes(type)}
-                onChange={() => toggleValue(serviceTypesPath, selectedServiceTypes, type)}
-              />
-            ))}
-          </OptionsGrid>
-        </FormField>
-      </>
+        <WideField>
+          <FormField label="Service Types" optional>
+            <OptionsGrid>
+              {diningServiceTypeOptions.map((type) => (
+                <Checkbox
+                  key={type}
+                  label={type}
+                  checked={selectedServiceTypes.includes(type)}
+                  onChange={() => toggleValue(serviceTypesPath, selectedServiceTypes, type)}
+                />
+              ))}
+            </OptionsGrid>
+          </FormField>
+        </WideField>
+      </Grid>
     );
   }
 

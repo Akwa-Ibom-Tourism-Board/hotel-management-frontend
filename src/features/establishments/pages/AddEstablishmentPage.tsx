@@ -122,7 +122,7 @@ export const AddEstablishmentPage = () => {
 
   return (
     <DashboardShell title="Add Establishment">
-      <Card style={{ maxWidth: "42rem" }}>
+      <Card style={mode === "search" ? { maxWidth: "32rem", margin: "0 auto" } : undefined}>
         <CardContent>
           {mode === "search" ? (
             <BackLink type="button" onClick={() => navigate("/dashboard/establishments")}>

@@ -1,14 +1,26 @@
 import styled from "styled-components";
 import { media } from "@/theme";
 
-export const TwoCol = styled.div`
+// The main field grid: 1 column on mobile, 2 from sm, 3 from lg — lets a
+// form with a lot of short fields fill wide screens instead of running
+// down a single narrow column. Long fields (free text, checkbox option
+// grids, field arrays) use WideField to span every column.
+export const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: 0 1rem;
 
   ${media.sm} {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
+
+  ${media.lg} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`;
+
+export const WideField = styled.div`
+  grid-column: 1 / -1;
 `;
 
 export const CheckboxRow = styled.div`
