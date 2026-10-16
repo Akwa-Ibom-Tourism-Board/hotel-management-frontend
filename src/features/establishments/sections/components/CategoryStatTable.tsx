@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Button, Input, Select } from "@/shared/ui";
+import { media } from "@/theme";
+import { CategoryEntryModal } from "./CategoryEntryModal";
 import type { CategoryFieldSpec, CategoryOptionSpec, CategoryTableRow } from "../types";
 
 // Same horizontally-scrollable wrapper + fade-edge affordance EstablishmentsTable
@@ -133,6 +135,102 @@ const AddSelectWrap = styled.div`
   flex: 1 1 13rem;
 `;
 
+// Below `sm`, a horizontally-scrolling table with inline inputs is fiddly
+// to use with a thumb — swap it for a tappable card list + an "Add
+// Category" button that opens CategoryEntryModal instead.
+const DesktopOnly = styled.div`
+  display: none;
+
+  ${media.sm} {
+    display: block;
+  }
+`;
+
+const MobileOnly = styled.div`
+  ${media.sm} {
+    display: none;
+  }
+`;
+
+const CardList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const CategoryCardButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.875rem 1rem;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.colors.card};
+  cursor: pointer;
+`;
+
+const CardInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+`;
+
+const CardLabel = styled.span`
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: ${({ theme }) => theme.colors.foreground};
+`;
+
+const CardValues = styled.span`
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.colors.muted.foreground};
+`;
+
+const CardEditIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: ${({ theme }) => theme.radii.full};
+  background: ${({ theme }) => theme.colors.muted.DEFAULT};
+  color: ${({ theme }) => theme.colors.primary.DEFAULT};
+`;
+
+const MobileEmptyText = styled.p`
+  padding: 1.25rem 1rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.colors.muted.foreground};
+  border: 1px dashed ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  margin: 0 0 0.75rem;
+`;
+
+const MobileTotals = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.colors.muted.DEFAULT};
+  font-size: 0.8125rem;
+`;
+
+const MobileTotalItem = styled.span`
+  color: ${({ theme }) => theme.colors.foreground};
+
+  strong {
+    font-weight: 700;
+  }
+`;
+
 const OTHER_OPTION: CategoryOptionSpec = { value: "other", label: "Other" };
 
 interface CategoryStatTableProps {
@@ -159,6 +257,8 @@ export const CategoryStatTable = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showFade, setShowFade] = useState(false);
   const [pendingCategory, setPendingCategory] = useState("");
+  // null = modal closed, "new" = adding a row, a rowKey = editing that row.
+  const [modalTarget, setModalTarget] = useState<"new" | string | null>(null);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -223,8 +323,65 @@ export const CategoryStatTable = ({
 
   const totalsRowTotal = fields.reduce((sum, field) => sum + (totals[field.key] ?? 0), 0);
 
+  const handleModalSave = (saved: CategoryTableRow) => {
+    const exists = rows.some((row) => row.rowKey === saved.rowKey);
+    onChange(exists ? rows.map((row) => (row.rowKey === saved.rowKey ? saved : row)) : [...rows, saved]);
+  };
+
+  const editingRow = typeof modalTarget === "string" && modalTarget !== "new" ? (rows.find((row) => row.rowKey === modalTarget) ?? null) : null;
+
+  const cardSummary = (row: CategoryTableRow) =>
+    fields.map((field) => `${field.label}: ${row.values[field.key] ?? 0}`).join(" · ");
+
   return (
     <div>
+      <MobileOnly>
+        <CardList>
+          {rows.length === 0 && (
+            <MobileEmptyText>No categories added yet; use "Add Category" below to get started.</MobileEmptyText>
+          )}
+          {rows.map((row) => (
+            <CategoryCardButton key={row.rowKey} type="button" onClick={() => setModalTarget(row.rowKey)} disabled={disabled}>
+              <CardInfo>
+                <CardLabel>{row.categoryLabel || "Untitled category"}</CardLabel>
+                <CardValues>{cardSummary(row)}</CardValues>
+              </CardInfo>
+              <CardEditIcon aria-hidden>
+                <Pencil size={15} />
+              </CardEditIcon>
+            </CategoryCardButton>
+          ))}
+        </CardList>
+
+        {rows.length > 0 && (
+          <MobileTotals>
+            {fields.map((field) => (
+              <MobileTotalItem key={field.key}>
+                {field.label}: <strong>{totals[field.key] ?? 0}</strong>
+              </MobileTotalItem>
+            ))}
+            {showRowTotal && (
+              <MobileTotalItem>
+                Total: <strong>{totalsRowTotal}</strong>
+              </MobileTotalItem>
+            )}
+          </MobileTotals>
+        )}
+
+        <AddRow>
+          <Button
+            type="button"
+            variant="outline"
+            fullWidth
+            onClick={() => setModalTarget("new")}
+            disabled={disabled || availableOptions.length === 0}
+          >
+            <Plus size={15} /> Add Category
+          </Button>
+        </AddRow>
+      </MobileOnly>
+
+      <DesktopOnly>
       <OuterWrap>
         <TableWrap ref={scrollRef}>
           <Table>
@@ -321,6 +478,19 @@ export const CategoryStatTable = ({
           <Plus size={15} /> Add Category
         </Button>
       </AddRow>
+      </DesktopOnly>
+
+      <CategoryEntryModal
+        open={modalTarget !== null}
+        onClose={() => setModalTarget(null)}
+        categoryColumnLabel={categoryColumnLabel}
+        predefinedOptions={predefinedOptions}
+        usedCategories={usedCategories}
+        fields={fields}
+        row={editingRow}
+        onSave={handleModalSave}
+        onDelete={handleRemove}
+      />
     </div>
   );
 };

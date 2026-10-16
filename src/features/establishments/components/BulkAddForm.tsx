@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, ChevronUp, Plus, Trash2, Save, FileClock } from "lucide-react";
@@ -66,9 +66,13 @@ const DraftHint = styled.p`
 interface BulkAddFormProps {
   onSubmit: (values: BulkAddFormSchema) => Promise<void> | void;
   onSaveDraft?: (values: BulkAddFormSchema) => Promise<void> | void;
+  // Lets the page shrink its wrapping Card down to a centered column for
+  // the (narrow, one-field) type-picker step, then let it fill the screen
+  // again once the actual field rows are showing.
+  onStepChange?: (step: "pick-type" | "form") => void;
 }
 
-export const BulkAddForm = ({ onSubmit, onSaveDraft }: BulkAddFormProps) => {
+export const BulkAddForm = ({ onSubmit, onSaveDraft, onStepChange }: BulkAddFormProps) => {
   const [lockedType, setLockedType] = useState<EntityTypeValue | null>(null);
   const [pendingType, setPendingType] = useState<EntityTypeValue>("hotel");
   const [expanded, setExpanded] = useState<Set<number>>(new Set([0]));
@@ -87,6 +91,11 @@ export const BulkAddForm = ({ onSubmit, onSaveDraft }: BulkAddFormProps) => {
   } = methods;
 
   const { fields, append, remove } = useFieldArray({ control, name: "establishments" });
+
+  useEffect(() => {
+    onStepChange?.(lockedType ? "form" : "pick-type");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lockedType]);
 
   const toggleExpanded = (index: number) => {
     setExpanded((prev) => {

@@ -11,6 +11,8 @@ import { StatusBadge } from "../components/StatusBadge";
 import { SectionsPanel } from "../sections/components/SectionsPanel";
 import type { EstablishmentFormSchema } from "../schemas/establishment.schema";
 import {
+  DetailGrid,
+  SideCol,
   BackLink,
   HeaderCard,
   BusinessName,
@@ -105,35 +107,40 @@ export const EstablishmentDetailPage = () => {
             </DisabledBanner>
           )}
 
-          {/* Owner info: a self-service owner is the account that owns this
-              establishment, so this is a read-only reflection of the logged-in
-              account rather than an editable field on the establishment. */}
-          <Card style={{ maxWidth: "42rem", marginBottom: "1rem" }}>
-            <CardHeader>
-              <CardTitle>Owner</CardTitle>
-              <CardDescription>You are the registered owner of this establishment.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <FormField label="Full Name">
-                <Input value={ownerFullName} readOnly />
-              </FormField>
-              <FormField label="Email">
-                <Input value={user?.email ?? ""} readOnly />
-              </FormField>
-            </CardContent>
-          </Card>
+          <DetailGrid>
+            <Card>
+              <CardContent>
+                <EstablishmentForm
+                  defaultValues={toFormDefaults(establishment)}
+                  onSubmit={handleSubmit}
+                  submitLabel={isDraft ? "Submit for Review" : "Save Changes"}
+                  onSaveDraft={isDraft && !isDisabled ? handleSaveDraft : undefined}
+                  readOnly={isDisabled}
+                />
+              </CardContent>
+            </Card>
 
-          <Card style={{ maxWidth: "42rem" }}>
-            <CardContent>
-              <EstablishmentForm
-                defaultValues={toFormDefaults(establishment)}
-                onSubmit={handleSubmit}
-                submitLabel={isDraft ? "Submit for Review" : "Save Changes"}
-                onSaveDraft={isDraft && !isDisabled ? handleSaveDraft : undefined}
-                readOnly={isDisabled}
-              />
-            </CardContent>
-          </Card>
+            <SideCol>
+              {/* Owner info: a self-service owner is the account that owns
+                  this establishment, so this is a read-only reflection of
+                  the logged-in account rather than an editable field on the
+                  establishment. */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Owner</CardTitle>
+                  <CardDescription>You are the registered owner of this establishment.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormField label="Full Name">
+                    <Input value={ownerFullName} readOnly />
+                  </FormField>
+                  <FormField label="Email">
+                    <Input value={user?.email ?? ""} readOnly />
+                  </FormField>
+                </CardContent>
+              </Card>
+            </SideCol>
+          </DetailGrid>
 
           <SectionsPanel establishmentId={establishment.id} entityType={establishment.entityType} />
         </>

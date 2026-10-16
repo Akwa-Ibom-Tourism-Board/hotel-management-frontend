@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ArrowLeft } from "lucide-react";
@@ -23,6 +24,7 @@ const BackLink = styled.button`
 
 export const BulkAddEstablishmentsPage = () => {
   const navigate = useNavigate();
+  const [step, setStep] = useState<"pick-type" | "form">("pick-type");
 
   const handleSubmit = async (values: BulkAddFormSchema) => {
     try {
@@ -46,12 +48,12 @@ export const BulkAddEstablishmentsPage = () => {
 
   return (
     <DashboardShell title="Bulk Add Establishments">
-      <Card style={{ maxWidth: "44rem" }}>
+      <Card style={step === "pick-type" ? { maxWidth: "32rem", margin: "0 auto" } : undefined}>
         <CardContent>
           <BackLink type="button" onClick={() => navigate("/dashboard/establishments")}>
             <ArrowLeft size={15} /> Back to Establishments
           </BackLink>
-          <BulkAddForm onSubmit={handleSubmit} onSaveDraft={handleSaveDraft} />
+          <BulkAddForm onSubmit={handleSubmit} onSaveDraft={handleSaveDraft} onStepChange={setStep} />
         </CardContent>
       </Card>
     </DashboardShell>

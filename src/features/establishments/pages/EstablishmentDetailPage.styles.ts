@@ -1,4 +1,30 @@
 import styled from "styled-components";
+import { media } from "@/theme";
+
+// Main form on the left, the compact Owner summary as a sidebar on the
+// right — fills wide screens instead of leaving the form pinned narrow on
+// the left with empty space beside it. Stacks to a single column below lg.
+export const DetailGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  ${media.lg} {
+    grid-template-columns: 2fr 1fr;
+  }
+`;
+
+export const SideCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  ${media.lg} {
+    position: sticky;
+    top: 1.5rem;
+  }
+`;
 
 export const BackLink = styled.button`
   display: inline-flex;
