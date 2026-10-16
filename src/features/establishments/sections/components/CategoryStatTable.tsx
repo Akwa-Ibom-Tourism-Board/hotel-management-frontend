@@ -137,7 +137,7 @@ const OTHER_OPTION: CategoryOptionSpec = { value: "other", label: "Other" };
 
 interface CategoryStatTableProps {
   categoryColumnLabel: string;
-  predefinedOptions: CategoryOptionSpec[];
+  predefinedOptions: readonly CategoryOptionSpec[];
   fields: CategoryFieldSpec[];
   rows: CategoryTableRow[];
   onChange: (rows: CategoryTableRow[]) => void;

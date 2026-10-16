@@ -8,6 +8,7 @@ import { getEstablishment, updateEstablishment, updateDraftEstablishment, submit
 import { toFormDefaults } from "../lib/toFormDefaults";
 import { EstablishmentForm } from "../components/EstablishmentForm";
 import { StatusBadge } from "../components/StatusBadge";
+import { SectionsPanel } from "../sections/components/SectionsPanel";
 import type { EstablishmentFormSchema } from "../schemas/establishment.schema";
 import {
   BackLink,
@@ -133,6 +134,8 @@ export const EstablishmentDetailPage = () => {
               />
             </CardContent>
           </Card>
+
+          <SectionsPanel establishmentId={establishment.id} entityType={establishment.entityType} />
         </>
       )}
     </DashboardShell>

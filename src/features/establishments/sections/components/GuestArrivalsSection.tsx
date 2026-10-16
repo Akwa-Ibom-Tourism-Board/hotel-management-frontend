@@ -11,7 +11,7 @@ import { SectionCardHeader, SectionIntro, FieldGrid, SectionActions, ErrorText }
 interface GuestArrivalsSectionProps {
   establishmentId: string;
   year: number;
-  status: SectionStatus | null;
+  status: SectionStatus | undefined;
 }
 
 export const GuestArrivalsSection = ({ establishmentId, year, status }: GuestArrivalsSectionProps) => {

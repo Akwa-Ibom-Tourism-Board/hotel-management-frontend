@@ -19,7 +19,7 @@ const FIELDS = [
 interface EmploymentStatsSectionProps {
   establishmentId: string;
   year: number;
-  status: SectionStatus | null;
+  status: SectionStatus | undefined;
 }
 
 export const EmploymentStatsSection = ({ establishmentId, year, status }: EmploymentStatsSectionProps) => {

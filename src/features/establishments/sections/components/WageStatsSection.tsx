@@ -19,7 +19,7 @@ import {
 interface WageStatsSectionProps {
   establishmentId: string;
   year: number;
-  status: SectionStatus | null;
+  status: SectionStatus | undefined;
 }
 
 export const WageStatsSection = ({ establishmentId, year, status }: WageStatsSectionProps) => {
