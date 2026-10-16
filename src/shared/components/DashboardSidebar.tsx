@@ -30,6 +30,13 @@ const Aside = styled.aside<{ $open: boolean }>`
   ${media.lg} {
     position: sticky;
     transform: none;
+    /* Without this, a sticky sidebar inside a flex row stretches to match
+       the (often much taller, scrollable) main content's height by default,
+       so its own bottom — and the Log Out button pinned there — ends up far
+       below the viewport, reachable only by scrolling the whole page. */
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
   }
 `;
 

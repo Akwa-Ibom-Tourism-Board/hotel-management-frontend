@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Building2, ChevronRight } from "lucide-react";
+import { Building2, ChevronRight, Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui";
 import { StatusBadge, DisabledBadge } from "./StatusBadge";
 import type { Establishment } from "../api/types";
 
@@ -30,6 +31,31 @@ const ScrollFade = styled.div<{ $visible: boolean }>`
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity ${({ theme }) => theme.transitions.fast};
   pointer-events: none;
+`;
+
+const ExpandBar = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+`;
+
+const ExpandButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: ${({ theme }) => theme.radii.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.card};
+  color: ${({ theme }) => theme.colors.muted.foreground};
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.muted.DEFAULT};
+    color: ${({ theme }) => theme.colors.foreground};
+  }
 `;
 
 const Table = styled.table`
@@ -121,9 +147,54 @@ interface EstablishmentsTableProps {
   establishments: Establishment[];
 }
 
+// The actual <table> markup, shared between the inline view and the
+// enlarged modal so the two never drift out of sync.
+const EstablishmentsGrid = ({ establishments }: EstablishmentsTableProps) => (
+  <Table>
+    <Thead>
+      <tr>
+        <Th>Business Name</Th>
+        <Th>Type</Th>
+        <Th>Local Government</Th>
+        <Th>Branches</Th>
+        <Th>Status</Th>
+        <Th aria-hidden />
+      </tr>
+    </Thead>
+    <tbody>
+      {establishments.map((establishment) => (
+        <Row key={establishment.id}>
+          <Td>
+            <NameCell to={`/dashboard/establishments/${establishment.id}`}>{establishment.businessName}</NameCell>
+          </Td>
+          <Td>
+            <TypeText>{establishment.entityType.replace(/_/g, " ")}</TypeText>
+          </Td>
+          <Td>{establishment.localGovernment}</Td>
+          <Td>
+            <BranchCount>{establishment.branches?.length ?? 0}</BranchCount>
+          </Td>
+          <Td>
+            <StatusCell>
+              <StatusBadge status={establishment.registrationStatus} />
+              {establishment.isDisabled && <DisabledBadge />}
+            </StatusCell>
+          </Td>
+          <ChevronCell>
+            <Link to={`/dashboard/establishments/${establishment.id}`} aria-label={`View ${establishment.businessName}`}>
+              <ChevronRight size={16} />
+            </Link>
+          </ChevronCell>
+        </Row>
+      ))}
+    </tbody>
+  </Table>
+);
+
 export const EstablishmentsTable = ({ establishments }: EstablishmentsTableProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showFade, setShowFade] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -154,49 +225,30 @@ export const EstablishmentsTable = ({ establishments }: EstablishmentsTableProps
   }
 
   return (
-    <OuterWrap>
-      <TableWrap ref={scrollRef}>
-        <Table>
-          <Thead>
-            <tr>
-              <Th>Business Name</Th>
-              <Th>Type</Th>
-              <Th>Local Government</Th>
-              <Th>Branches</Th>
-              <Th>Status</Th>
-              <Th aria-hidden />
-            </tr>
-          </Thead>
-          <tbody>
-            {establishments.map((establishment) => (
-              <Row key={establishment.id}>
-                <Td>
-                  <NameCell to={`/dashboard/establishments/${establishment.id}`}>{establishment.businessName}</NameCell>
-                </Td>
-                <Td>
-                  <TypeText>{establishment.entityType.replace(/_/g, " ")}</TypeText>
-                </Td>
-                <Td>{establishment.localGovernment}</Td>
-                <Td>
-                  <BranchCount>{establishment.branches?.length ?? 0}</BranchCount>
-                </Td>
-                <Td>
-                  <StatusCell>
-                    <StatusBadge status={establishment.registrationStatus} />
-                    {establishment.isDisabled && <DisabledBadge />}
-                  </StatusCell>
-                </Td>
-                <ChevronCell>
-                  <Link to={`/dashboard/establishments/${establishment.id}`} aria-label={`View ${establishment.businessName}`}>
-                    <ChevronRight size={16} />
-                  </Link>
-                </ChevronCell>
-              </Row>
-            ))}
-          </tbody>
-        </Table>
-      </TableWrap>
-      <ScrollFade $visible={showFade} />
-    </OuterWrap>
+    <div>
+      <ExpandBar>
+        <ExpandButton type="button" onClick={() => setExpanded(true)}>
+          <Maximize2 size={13} /> Enlarge
+        </ExpandButton>
+      </ExpandBar>
+
+      <OuterWrap>
+        <TableWrap ref={scrollRef}>
+          <EstablishmentsGrid establishments={establishments} />
+        </TableWrap>
+        <ScrollFade $visible={showFade} />
+      </OuterWrap>
+
+      {expanded && (
+        <Dialog open={expanded} onOpenChange={setExpanded}>
+          <DialogContent maxWidth="min(96vw, 80rem)">
+            <DialogTitle>Establishments</DialogTitle>
+            <TableWrap style={{ overflowX: "auto" }}>
+              <EstablishmentsGrid establishments={establishments} />
+            </TableWrap>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
   );
 };

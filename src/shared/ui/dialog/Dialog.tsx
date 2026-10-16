@@ -36,13 +36,13 @@ const Overlay = styled.div`
   animation: ${fadeIn} 150ms ease;
 `;
 
-const Content = styled.div`
+const Content = styled.div<{ $maxWidth?: string }>`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: calc(100% - 2rem);
-  max-width: 32rem;
+  max-width: ${({ $maxWidth }) => $maxWidth ?? "32rem"};
   max-height: 90vh;
   overflow-y: auto;
   background: ${({ theme }) => theme.colors.card};
@@ -72,7 +72,15 @@ const CloseButton = styled.button`
   }
 `;
 
-export const DialogContent = ({ children, hideClose }: { children: ReactNode; hideClose?: boolean }) => {
+export const DialogContent = ({
+  children,
+  hideClose,
+  maxWidth,
+}: {
+  children: ReactNode;
+  hideClose?: boolean;
+  maxWidth?: string;
+}) => {
   const ctx = useContext(DialogCtx);
 
   useEffect(() => {
@@ -86,7 +94,7 @@ export const DialogContent = ({ children, hideClose }: { children: ReactNode; hi
   return createPortal(
     <>
       <Overlay onClick={() => ctx?.onOpenChange(false)} />
-      <Content role="dialog" aria-modal="true">
+      <Content role="dialog" aria-modal="true" $maxWidth={maxWidth}>
         {children}
         {!hideClose && (
           <CloseButton aria-label="Close" onClick={() => ctx?.onOpenChange(false)} type="button">

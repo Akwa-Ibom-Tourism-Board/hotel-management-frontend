@@ -1,7 +1,7 @@
 export type SectionStatus = "draft" | "complete";
 
-// Reporting data starts from 2022 through the current year.
-const REPORTING_YEAR_START = 2022;
+// Reporting data starts from 2024 through the current year.
+const REPORTING_YEAR_START = 2024;
 
 export const getReportingYears = (): number[] => {
   const end = new Date().getFullYear();
