@@ -1,11 +1,10 @@
 export type SectionStatus = "draft" | "complete";
 
-// Reporting data starts from 2022; the upper bound always includes next
-// year so an owner can get a head start on it before the year turns over.
+// Reporting data starts from 2022 through the current year.
 const REPORTING_YEAR_START = 2022;
 
 export const getReportingYears = (): number[] => {
-  const end = new Date().getFullYear() + 1;
+  const end = new Date().getFullYear();
   const years: number[] = [];
   for (let year = REPORTING_YEAR_START; year <= end; year += 1) {
     years.push(year);
