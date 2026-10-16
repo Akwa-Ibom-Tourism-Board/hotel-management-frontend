@@ -38,6 +38,8 @@ export const EstablishmentDetailPage = () => {
   });
 
   const isDraft = establishment?.registrationStatus === "Draft";
+  const isDisabled = Boolean(establishment?.isDisabled);
+  const ownerFullName = user?.fullName?.trim() || [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
 
   const handleSubmit = async (values: EstablishmentFormSchema) => {
     if (!id) return;
@@ -89,13 +91,45 @@ export const EstablishmentDetailPage = () => {
             <RejectionNote>Rejection reason: {establishment.rejectionReason}</RejectionNote>
           )}
 
+          {isDisabled && (
+            <DisabledBanner>
+              <DisabledBannerTitle>
+                <Ban size={17} /> This establishment has been deactivated by the Commission
+              </DisabledBannerTitle>
+              {establishment.disabledReason && <DisabledBannerText>Reason: {establishment.disabledReason}</DisabledBannerText>}
+              <DisabledBannerText>
+                The details below are read-only while deactivated. Please contact the Commission by phone or in person to
+                resolve this and have it reactivated.
+              </DisabledBannerText>
+            </DisabledBanner>
+          )}
+
+          {/* Owner info: a self-service owner is the account that owns this
+              establishment, so this is a read-only reflection of the logged-in
+              account rather than an editable field on the establishment. */}
+          <Card style={{ maxWidth: "42rem", marginBottom: "1rem" }}>
+            <CardHeader>
+              <CardTitle>Owner</CardTitle>
+              <CardDescription>You are the registered owner of this establishment.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FormField label="Full Name">
+                <Input value={ownerFullName} readOnly />
+              </FormField>
+              <FormField label="Email">
+                <Input value={user?.email ?? ""} readOnly />
+              </FormField>
+            </CardContent>
+          </Card>
+
           <Card style={{ maxWidth: "42rem" }}>
             <CardContent>
               <EstablishmentForm
                 defaultValues={toFormDefaults(establishment)}
                 onSubmit={handleSubmit}
                 submitLabel={isDraft ? "Submit for Review" : "Save Changes"}
-                onSaveDraft={isDraft ? handleSaveDraft : undefined}
+                onSaveDraft={isDraft && !isDisabled ? handleSaveDraft : undefined}
+                readOnly={isDisabled}
               />
             </CardContent>
           </Card>
