@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Building2, ChevronRight } from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
+import { StatusBadge, DisabledBadge } from "./StatusBadge";
 import type { Establishment } from "../api/types";
 
 const OuterWrap = styled.div`
@@ -105,6 +105,13 @@ const EmptyText = styled.p`
   margin: 0;
 `;
 
+const StatusCell = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+`;
+
 const ChevronCell = styled(Td)`
   width: 2rem;
   color: ${({ theme }) => theme.colors.muted.foreground};
@@ -174,7 +181,10 @@ export const EstablishmentsTable = ({ establishments }: EstablishmentsTableProps
                   <BranchCount>{establishment.branches?.length ?? 0}</BranchCount>
                 </Td>
                 <Td>
-                  <StatusBadge status={establishment.registrationStatus} />
+                  <StatusCell>
+                    <StatusBadge status={establishment.registrationStatus} />
+                    {establishment.isDisabled && <DisabledBadge />}
+                  </StatusCell>
                 </Td>
                 <ChevronCell>
                   <Link to={`/dashboard/establishments/${establishment.id}`} aria-label={`View ${establishment.businessName}`}>

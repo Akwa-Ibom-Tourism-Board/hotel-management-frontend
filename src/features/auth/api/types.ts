@@ -11,6 +11,8 @@ export interface User {
   dateOfBirth?: string | null;
   role: UserRole;
   emailVerified: boolean;
+  isActive: boolean;
+  mustChangePassword: boolean;
 }
 
 export interface NinLookupPayload {
@@ -27,12 +29,9 @@ export interface NinLookupResult {
 }
 
 export interface RegisterPayload {
-  nin: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
   email: string;
-  phoneNumber: string;
   password: string;
 }
 

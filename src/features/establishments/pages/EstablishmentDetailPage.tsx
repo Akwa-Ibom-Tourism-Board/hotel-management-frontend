@@ -1,18 +1,30 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Ban } from "lucide-react";
 import { DashboardShell, PageLoader } from "@/shared/components";
-import { Card, CardContent, toast } from "@/shared/ui";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, FormField, Input, toast } from "@/shared/ui";
+import { useAuth } from "@/features/auth";
 import { getEstablishment, updateEstablishment, updateDraftEstablishment, submitDraftEstablishment } from "../api";
 import { toFormDefaults } from "../lib/toFormDefaults";
 import { EstablishmentForm } from "../components/EstablishmentForm";
 import { StatusBadge } from "../components/StatusBadge";
 import type { EstablishmentFormSchema } from "../schemas/establishment.schema";
-import { BackLink, HeaderCard, BusinessName, BusinessId, RejectionNote, ErrorText } from "./EstablishmentDetailPage.styles";
+import {
+  BackLink,
+  HeaderCard,
+  BusinessName,
+  BusinessId,
+  RejectionNote,
+  DisabledBanner,
+  DisabledBannerTitle,
+  DisabledBannerText,
+  ErrorText,
+} from "./EstablishmentDetailPage.styles";
 
 export const EstablishmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const {
     data: establishment,

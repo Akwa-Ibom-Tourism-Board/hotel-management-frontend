@@ -48,6 +48,36 @@ export const RejectionNote = styled.p`
   margin-bottom: 1.5rem;
 `;
 
+// A more prominent notice than RejectionNote: a disabled establishment is
+// a stronger, ongoing state (read-only, Commission-initiated) rather than
+// a one-time reviewer note, so it gets a bordered block instead of a line.
+export const DisabledBanner = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 1rem 1.25rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.alpha(theme.colors.destructive.DEFAULT, 0.1)};
+  border: 1px solid ${({ theme }) => theme.alpha(theme.colors.destructive.DEFAULT, 0.3)};
+  margin-bottom: 1.5rem;
+`;
+
+export const DisabledBannerTitle = styled.p`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: ${({ theme }) => theme.colors.destructive.DEFAULT};
+`;
+
+export const DisabledBannerText = styled.p`
+  margin: 0;
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.colors.destructive.DEFAULT};
+`;
+
 export const ErrorText = styled.p`
   color: ${({ theme }) => theme.colors.destructive.DEFAULT};
   font-size: 0.875rem;

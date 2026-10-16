@@ -35,3 +35,12 @@ export const StatusBadge = ({ status }: { status: RegistrationStatus }) => {
     </Badge>
   );
 };
+
+// Shown alongside StatusBadge when the Commission has deactivated an
+// establishment; registrationStatus is unaffected, so this is a separate,
+// independent indicator rather than another status value.
+export const DisabledBadge = () => (
+  <Badge $bg="rgba(239, 68, 68, 0.12)" $fg="#DC2626">
+    Disabled
+  </Badge>
+);

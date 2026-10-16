@@ -41,6 +41,11 @@ export interface Establishment {
   submittedAt?: string;
   approvedAt?: string | null;
   branches?: Branch[];
+  // Set by the Commission when it deactivates an establishment; the
+  // establishment stays read-only for the owner while this is true.
+  isDisabled?: boolean;
+  disabledAt?: string | null;
+  disabledReason?: string | null;
 }
 
 export interface EstablishmentSearchResult {
@@ -53,7 +58,18 @@ export interface EstablishmentSearchResult {
 
 export type EstablishmentFormValues = Omit<
   Establishment,
-  "id" | "uniqueBusinessId" | "registrationStatus" | "rejectionReason" | "ownerId" | "submittedAt" | "approvedAt" | "phoneVerified" | "branches"
+  | "id"
+  | "uniqueBusinessId"
+  | "registrationStatus"
+  | "rejectionReason"
+  | "ownerId"
+  | "submittedAt"
+  | "approvedAt"
+  | "phoneVerified"
+  | "branches"
+  | "isDisabled"
+  | "disabledAt"
+  | "disabledReason"
 >;
 
 export interface BranchInput {

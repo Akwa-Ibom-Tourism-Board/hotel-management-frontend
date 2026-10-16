@@ -2,18 +2,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight } from "lucide-react";
+import styled from "styled-components";
 import { Input, PasswordInput, Button, FormField } from "@/shared/ui";
-import type { NinLookupResult, RegisterPayload } from "../api/types";
+import type { RegisterPayload } from "../api/types";
 
 const schema = z
   .object({
     firstName: z.string().trim().min(1, "First name is required"),
     lastName: z.string().trim().min(1, "Last name is required"),
     email: z.string().trim().email("Enter a valid email address"),
-    phoneNumber: z
-      .string()
-      .trim()
-      .regex(/^(0[789][01]\d{8}|234[789][01]\d{8})$/, "Enter a valid Nigerian phone number"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
@@ -25,17 +22,20 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 interface AccountDetailsFormProps {
-  ninResult: NinLookupResult;
   onSubmit: (payload: RegisterPayload) => Promise<void> | void;
 }
 
-const formatDate = (iso: string) => {
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString("en-NG", { year: "numeric", month: "long", day: "numeric" });
-};
+const Notice = styled.p`
+  margin: 0 0 1.25rem;
+  padding: 0.875rem 1rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.colors.muted.DEFAULT};
+  color: ${({ theme }) => theme.colors.foreground};
+  font-size: 0.8125rem;
+  line-height: 1.5;
+`;
 
-export const AccountDetailsForm = ({ ninResult, onSubmit }: AccountDetailsFormProps) => {
+export const AccountDetailsForm = ({ onSubmit }: AccountDetailsFormProps) => {
   const {
     register,
     handleSubmit,
@@ -43,10 +43,9 @@ export const AccountDetailsForm = ({ ninResult, onSubmit }: AccountDetailsFormPr
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: ninResult.firstName,
-      lastName: ninResult.lastName,
+      firstName: "",
+      lastName: "",
       email: "",
-      phoneNumber: "",
       password: "",
       confirmPassword: "",
     },
@@ -54,18 +53,16 @@ export const AccountDetailsForm = ({ ninResult, onSubmit }: AccountDetailsFormPr
 
   const submit = async (values: FormValues) => {
     const { confirmPassword: _confirmPassword, ...rest } = values;
-    await onSubmit({
-      nin: ninResult.nin,
-      dateOfBirth: ninResult.dateOfBirth,
-      ...rest,
-    });
+    await onSubmit(rest);
   };
 
   return (
     <form onSubmit={handleSubmit(submit)}>
-      <FormField label="National Identification Number (NIN)">
-        <Input value={ninResult.nin} readOnly />
-      </FormField>
+      <Notice>
+        We recommend registering with your own email address rather than a
+        shared or staff inbox. Your password is sent to that email, and you
+        can invite your team or admin staff to the portal afterwards.
+      </Notice>
 
       <FormField label="First Name" required error={errors.firstName?.message}>
         <Input placeholder="First name" {...register("firstName")} />
@@ -75,16 +72,8 @@ export const AccountDetailsForm = ({ ninResult, onSubmit }: AccountDetailsFormPr
         <Input placeholder="Last name" {...register("lastName")} />
       </FormField>
 
-      <FormField label="Date of Birth">
-        <Input value={formatDate(ninResult.dateOfBirth)} readOnly />
-      </FormField>
-
       <FormField label="Email Address" required error={errors.email?.message}>
         <Input type="email" placeholder="you@example.com" {...register("email")} />
-      </FormField>
-
-      <FormField label="Phone Number" required error={errors.phoneNumber?.message}>
-        <Input type="tel" placeholder="08012345678" {...register("phoneNumber")} />
       </FormField>
 
       <FormField label="Password" required error={errors.password?.message}>
@@ -97,10 +86,10 @@ export const AccountDetailsForm = ({ ninResult, onSubmit }: AccountDetailsFormPr
 
       <Button type="submit" size="lg" style={{ width: "100%" }} disabled={isSubmitting}>
         {isSubmitting ? (
-          "Saving..."
+          "Creating account..."
         ) : (
           <>
-            Save & Continue <ArrowRight size={18} />
+            Create Account <ArrowRight size={18} />
           </>
         )}
       </Button>

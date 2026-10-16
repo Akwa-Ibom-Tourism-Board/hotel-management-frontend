@@ -4,11 +4,11 @@ import { LandingPage } from "@/features/home";
 import { NotFoundPage } from "@/features/not-found";
 import {
   LoginPage,
-  RegisterNinPage,
-  RegisterDetailsPage,
+  RegisterPage,
   VerifyEmailPage,
   ForgotPasswordPage,
   ResetPasswordPage,
+  ForcePasswordChangePage,
 } from "@/features/auth";
 import { AnalyticsPage } from "@/features/dashboard";
 import {
@@ -33,11 +33,18 @@ export const AppRoutes = () => (
     />
 
     <Route path="/login" element={<LoginPage />} />
-    <Route path="/register" element={<RegisterNinPage />} />
-    <Route path="/register/details" element={<RegisterDetailsPage />} />
+    <Route path="/register" element={<RegisterPage />} />
     <Route path="/register/verify-email" element={<VerifyEmailPage />} />
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
+    <Route
+      path="/force-password-change"
+      element={
+        <ProtectedRoute>
+          <ForcePasswordChangePage />
+        </ProtectedRoute>
+      }
+    />
 
     <Route
       path="/dashboard"

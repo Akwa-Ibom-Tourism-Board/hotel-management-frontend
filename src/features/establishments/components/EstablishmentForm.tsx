@@ -46,6 +46,15 @@ const DraftHint = styled.p`
   margin: 0.5rem 0 0;
 `;
 
+// Resets the browser's default fieldset chrome so it can be used purely
+// as a way to disable every field it wraps (via the `disabled` attribute)
+// without changing the form's layout.
+const FieldsetReset = styled.fieldset`
+  border: none;
+  margin: 0;
+  padding: 0;
+`;
+
 interface EstablishmentFormProps {
   defaultValues?: Partial<EstablishmentFormSchema>;
   lockedEntityType?: EntityTypeValue;
@@ -53,6 +62,9 @@ interface EstablishmentFormProps {
   submitLabel?: string;
   onSaveDraft?: (values: Partial<EstablishmentFormSchema>) => Promise<void> | void;
   draftLabel?: string;
+  // When true, every field is disabled and the submit/draft actions are
+  // hidden, so the form can be shown for reference without being editable.
+  readOnly?: boolean;
 }
 
 export const EstablishmentForm = ({
@@ -62,6 +74,7 @@ export const EstablishmentForm = ({
   submitLabel = "Save Establishment",
   onSaveDraft,
   draftLabel = "Save as Draft",
+  readOnly = false,
 }: EstablishmentFormProps) => {
   const methods = useForm<EstablishmentFormSchema>({
     resolver: zodResolver(establishmentSchema),
@@ -121,30 +134,36 @@ export const EstablishmentForm = ({
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <EstablishmentFieldsGroup entityType={entityType} showEntityTypeSelect={!lockedEntityType} />
+        <FieldsetReset disabled={readOnly}>
+          <EstablishmentFieldsGroup entityType={entityType} showEntityTypeSelect={!lockedEntityType} />
+        </FieldsetReset>
 
-        <Actions>
-          {onSaveDraft && (
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              disabled={isSubmitting || isSavingDraft}
-              onClick={handleSaveDraft}
-              fullWidth
-            >
-              <FileClock size={17} />
-              {isSavingDraft ? "Saving Draft..." : draftLabel}
-            </Button>
-          )}
-          <Button type="submit" size="lg" disabled={isSubmitting || isSavingDraft} fullWidth>
-            <Save size={17} />
-            {isSubmitting ? "Submitting..." : submitLabel}
-          </Button>
-        </Actions>
+        {!readOnly && (
+          <>
+            <Actions>
+              {onSaveDraft && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  disabled={isSubmitting || isSavingDraft}
+                  onClick={handleSaveDraft}
+                  fullWidth
+                >
+                  <FileClock size={17} />
+                  {isSavingDraft ? "Saving Draft..." : draftLabel}
+                </Button>
+              )}
+              <Button type="submit" size="lg" disabled={isSubmitting || isSavingDraft} fullWidth>
+                <Save size={17} />
+                {isSubmitting ? "Submitting..." : submitLabel}
+              </Button>
+            </Actions>
 
-        {onSaveDraft && (
-          <DraftHint>Saving as a draft keeps whatever you have filled in; you can come back and finish it later.</DraftHint>
+            {onSaveDraft && (
+              <DraftHint>Saving as a draft keeps whatever you have filled in; you can come back and finish it later.</DraftHint>
+            )}
+          </>
         )}
       </form>
     </FormProvider>
