@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import { Menu, Sun, Moon } from "lucide-react";
+import { Menu } from "lucide-react";
+// Dark mode is disabled for now — see theme/ThemeModeContext.tsx.
+// import { Sun, Moon } from "lucide-react";
+// import { useThemeMode } from "@/theme";
 import { useAuth } from "@/features/auth";
-import { useThemeMode } from "@/theme";
 import { Avatar, AvatarFallback } from "@/shared/ui";
 import { media } from "@/theme";
 
@@ -55,23 +57,24 @@ const UserCluster = styled.div`
   gap: 0.75rem;
 `;
 
-const IconToggleButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: ${({ theme }) => theme.radii.full};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.foreground};
-  cursor: pointer;
-  transition: background-color ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.muted.DEFAULT};
-  }
-`;
+// Dark mode is disabled for now — see theme/ThemeModeContext.tsx.
+// const IconToggleButton = styled.button`
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 2.25rem;
+//   height: 2.25rem;
+//   border-radius: ${({ theme }) => theme.radii.full};
+//   border: 1px solid ${({ theme }) => theme.colors.border};
+//   background: ${({ theme }) => theme.colors.background};
+//   color: ${({ theme }) => theme.colors.foreground};
+//   cursor: pointer;
+//   transition: background-color ${({ theme }) => theme.transitions.fast};
+//
+//   &:hover {
+//     background: ${({ theme }) => theme.colors.muted.DEFAULT};
+//   }
+// `;
 
 interface DashboardTopbarProps {
   title: string;
@@ -80,7 +83,6 @@ interface DashboardTopbarProps {
 
 export const DashboardTopbar = ({ title, onMenuClick }: DashboardTopbarProps) => {
   const { user } = useAuth();
-  const { mode, toggleMode } = useThemeMode();
   const displayName = user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email;
   const initials =
     user?.firstName && user?.lastName
@@ -93,13 +95,14 @@ export const DashboardTopbar = ({ title, onMenuClick }: DashboardTopbarProps) =>
         <Menu size={22} />
       </MenuToggle>
       <Title>{title}</Title>
+      {/* Dark mode is disabled for now — see theme/ThemeModeContext.tsx.
       <IconToggleButton
         onClick={toggleMode}
         aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
         type="button"
       >
         {mode === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-      </IconToggleButton>
+      </IconToggleButton> */}
       <UserCluster>
         <Avatar>
           <AvatarFallback>{initials}</AvatarFallback>

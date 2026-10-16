@@ -20,13 +20,18 @@ interface ThemeModeContextValue {
 const ThemeModeContext = createContext<ThemeModeContextValue | undefined>(undefined);
 
 const getInitialMode = (): ThemeMode => {
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "light" || stored === "dark") return stored;
-  } catch {
-    // localStorage unavailable (private mode, disabled storage, etc) — fall through
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  // Dark mode is disabled for now — the toggle is commented out across the
+  // app (see Navbar.tsx / DashboardTopbar.tsx) and the portal is locked to
+  // permanent light mode. Restore the block below to bring it back.
+  return "light";
+
+  // try {
+  //   const stored = window.localStorage.getItem(STORAGE_KEY);
+  //   if (stored === "light" || stored === "dark") return stored;
+  // } catch {
+  //   // localStorage unavailable (private mode, disabled storage, etc) — fall through
+  // }
+  // return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 };
 
 export const ThemeModeProvider = ({ children }: { children: ReactNode }) => {

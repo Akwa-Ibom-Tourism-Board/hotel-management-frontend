@@ -134,24 +134,25 @@ export const IconToggleButton = styled.button`
 
 export const NavCtaButtonOutline = styled(Link)`
   display: none;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 0.5rem 1.125rem;
+  border-radius: ${({ theme }) => theme.radii.full};
+  border: 1.5px solid ${({ theme }) => theme.colors.primary.DEFAULT};
+  background: transparent;
+  color: ${({ theme }) => theme.colors.primary.DEFAULT};
+  font-weight: 600;
+  font-size: 0.8125rem;
+  transition: background-color ${({ theme }) => theme.transitions.fast}, color ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary.DEFAULT};
+    color: ${({ theme }) => theme.colors.primary.foreground};
+  }
 
   ${media.sm} {
     display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-    padding: 0.5rem 1.125rem;
-    border-radius: ${({ theme }) => theme.radii.full};
-    border: 1.5px solid ${({ theme }) => theme.colors.primary.DEFAULT};
-    background: transparent;
-    color: ${({ theme }) => theme.colors.primary.DEFAULT};
-    font-weight: 600;
-    font-size: 0.8125rem;
-    transition: background-color ${({ theme }) => theme.transitions.fast}, color ${({ theme }) => theme.transitions.fast};
-
-    &:hover {
-      background: ${({ theme }) => theme.colors.primary.DEFAULT};
-      color: ${({ theme }) => theme.colors.primary.foreground};
-    }
   }
 `;
 
@@ -189,35 +190,97 @@ export const MenuButton = styled.button`
   }
 `;
 
-export const MobileMenu = styled.div`
-  padding: 1rem 0 0.5rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  animation: ${fadeIn} 0.3s ease-out;
+export const Backdrop = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: ${({ theme }) => theme.zIndex.navbar + 1};
+  animation: ${fadeIn} 0.2s ease-out;
 
   ${media.md} {
     display: none;
   }
 `;
 
+export const MobileMenu = styled.div<{ $open: boolean }>`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(85vw, 22rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background: ${({ theme }) => theme.colors.card};
+  box-shadow: ${({ theme }) => theme.shadows.lg};
+  z-index: ${({ theme }) => theme.zIndex.navbar + 2};
+  transform: translateX(${({ $open }) => ($open ? "0" : "100%")});
+  visibility: ${({ $open }) => ($open ? "visible" : "hidden")};
+  transition: transform 0.25s ease-out, visibility 0.25s ease-out;
+  overflow-y: auto;
+
+  ${media.md} {
+    display: none;
+  }
+`;
+
+export const MobileMenuHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const MobileCloseButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: ${({ theme }) => theme.radii.full};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.foreground};
+  cursor: pointer;
+`;
+
 export const MobileLinks = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
 `;
 
 export const MobileNavItemLink = styled(Link)`
-  padding: 0.625rem 0;
+  padding: 0.875rem 0.5rem;
+  border-radius: ${({ theme }) => theme.radii.md};
   color: ${({ theme }) => theme.colors.foreground};
-  font-weight: 500;
-  transition: color ${({ theme }) => theme.transitions.fast};
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color ${({ theme }) => theme.transitions.fast}, color ${({ theme }) => theme.transitions.fast};
 
   &:hover {
+    background: ${({ theme }) => theme.colors.muted.DEFAULT};
     color: ${({ theme }) => theme.colors.secondary.DEFAULT};
   }
 `;
 
+export const MobileDivider = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  margin: 1.25rem 0;
+`;
+
 export const MobileCtaRow = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: auto;
+
+  a {
+    justify-content: center;
+    width: 100%;
+  }
 `;
