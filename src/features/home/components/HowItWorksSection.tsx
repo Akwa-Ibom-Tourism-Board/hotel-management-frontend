@@ -7,7 +7,7 @@ const HowItWorksSection = () => (
     <Container>
       <Header>
         <Eyebrow>How It Works</Eyebrow>
-        <Title>From NIN to License in Four Simple Steps</Title>
+        <Title>From Sign-Up to License in Four Simple Steps</Title>
         <Subtitle>No paperwork queues, no guesswork, the whole process happens online, from verification to licensing.</Subtitle>
       </Header>
 

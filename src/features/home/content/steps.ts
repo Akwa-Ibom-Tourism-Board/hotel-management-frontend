@@ -7,15 +7,14 @@ export interface HowItWorksStep {
 export const steps: HowItWorksStep[] = [
   {
     step: 1,
-    title: "Verify with your NIN",
+    title: "Create your account",
     description:
-      "Enter your National Identification Number. We securely fetch and confirm your details in seconds.",
+      "Enter your name, email, and set a password. We recommend using your own email address.",
   },
   {
     step: 2,
-    title: "Create your account",
-    description:
-      "Confirm your details, set an email and password, and verify your email with a one time code.",
+    title: "Verify your email",
+    description: "Confirm your email address with a one time code sent straight to your inbox.",
   },
   {
     step: 3,

@@ -8,8 +8,8 @@ const CtaSection = () => (
     <Inner>
       <Title>Ready to Register Your Establishment?</Title>
       <Subtitle>
-        Create your account with your NIN in minutes and start managing your hospitality establishments in one
-        secure dashboard.
+        Create your account in minutes and start managing your hospitality establishments in one secure
+        dashboard.
       </Subtitle>
       <ButtonRow>
         <Link to="/register">
