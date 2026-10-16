@@ -40,7 +40,7 @@ export const EstablishmentDetailPage = () => {
 
   const isDraft = establishment?.registrationStatus === "Draft";
   const isDisabled = Boolean(establishment?.isDisabled);
-  const ownerFullName = user?.fullName?.trim() || [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
+  const ownerFullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();
 
   const handleSubmit = async (values: EstablishmentFormSchema) => {
     if (!id) return;

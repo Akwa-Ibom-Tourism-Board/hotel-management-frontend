@@ -2,7 +2,6 @@ export type UserRole = "owner" | "admin";
 
 export interface User {
   id: string;
-  fullName?: string | null;
   firstName?: string | null;
   lastName?: string | null;
   email: string;
