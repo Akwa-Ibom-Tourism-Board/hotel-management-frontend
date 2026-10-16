@@ -124,7 +124,11 @@ export const AddEstablishmentPage = () => {
     <DashboardShell title="Add Establishment">
       <Card style={{ maxWidth: "42rem" }}>
         <CardContent>
-          {mode !== "search" && (
+          {mode === "search" ? (
+            <BackLink type="button" onClick={() => navigate("/dashboard/establishments")}>
+              <ArrowLeft size={15} /> Back to Establishments
+            </BackLink>
+          ) : (
             <BackLink type="button" onClick={backToSearch}>
               <ArrowLeft size={15} /> Back to search
             </BackLink>

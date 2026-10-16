@@ -76,6 +76,7 @@ export const updateBranch = async (branchId: string, payload: Partial<BranchInpu
   return data.data;
 };
 
-export const deleteBranch = async (branchId: string): Promise<void> => {
-  await httpClient.delete(`/establishments/branches/${branchId}`);
-};
+// No owner-facing deleteBranch: branch deletion is admin-only now (the
+// backend's DELETE /establishments/branches/:branchId route was removed).
+// Removing a branch from this app's own UI just drops it from the
+// establishment's branches[] array, which the backend reconciles on save.
