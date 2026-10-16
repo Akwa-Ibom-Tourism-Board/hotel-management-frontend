@@ -1,25 +1,34 @@
 import * as React from "react";
 import styled from "styled-components";
 
-const Row = styled.div`
+const Wrap = styled.div`
   display: flex;
-  gap: 0.5rem;
   justify-content: center;
-  flex-wrap: wrap;
 `;
 
-const Cell = styled.input`
-  width: 2.75rem;
-  height: 3.25rem;
+const Field = styled.input`
+  width: 100%;
+  max-width: 20rem;
+  height: 3.5rem;
+  padding: 0 1rem;
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
   color: ${({ theme }) => theme.colors.primary.DEFAULT};
   border: 1.5px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.lg};
   background: ${({ theme }) => theme.colors.card};
   outline: none;
   transition: border-color ${({ theme }) => theme.transitions.fast}, box-shadow ${({ theme }) => theme.transitions.fast};
+
+  &::placeholder {
+    letter-spacing: normal;
+    text-indent: 0;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colors.muted.foreground};
+  }
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary.DEFAULT};
@@ -35,55 +44,30 @@ interface OtpInputProps {
 }
 
 export const OtpInput = ({ length = 6, value, onChange, disabled }: OtpInputProps) => {
-  const refs = React.useRef<Array<HTMLInputElement | null>>([]);
-  const chars = value.split("");
+  const ref = React.useRef<HTMLInputElement | null>(null);
 
-  const setChar = (index: number, char: string) => {
-    const next = value.split("");
-    next[index] = char;
-    onChange(next.join("").slice(0, length));
-  };
+  React.useEffect(() => {
+    ref.current?.focus();
+  }, []);
 
-  const handleChange = (index: number, raw: string) => {
-    const char = raw.slice(-1).replace(/[^0-9]/g, "");
-    setChar(index, char);
-    if (char && index < length - 1) {
-      refs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !chars[index] && index > 0) {
-      refs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData("text").trim().replace(/[^0-9]/g, "").slice(0, length);
-    onChange(pasted);
-    const lastIndex = Math.min(pasted.length, length - 1);
-    refs.current[lastIndex]?.focus();
+  const handleChange = (raw: string) => {
+    const digits = raw.replace(/[^0-9]/g, "").slice(0, length);
+    onChange(digits);
   };
 
   return (
-    <Row>
-      {Array.from({ length }).map((_, index) => (
-        <Cell
-          key={index}
-          ref={(el) => {
-            refs.current[index] = el;
-          }}
-          value={chars[index] ?? ""}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(index, e)}
-          onPaste={handlePaste}
-          disabled={disabled}
-          maxLength={1}
-          inputMode="numeric"
-          autoComplete="off"
-        />
-      ))}
-    </Row>
+    <Wrap>
+      <Field
+        ref={ref}
+        value={value}
+        onChange={(e) => handleChange(e.target.value)}
+        onFocus={(e) => e.target.select()}
+        disabled={disabled}
+        maxLength={length}
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        placeholder={"•".repeat(length)}
+      />
+    </Wrap>
   );
 };
