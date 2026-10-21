@@ -61,6 +61,17 @@ const DraftBanner = styled.div`
   margin-bottom: 1.25rem;
 `;
 
+const ExistsBanner = styled.div`
+  padding: 0.875rem 1rem;
+  border-radius: ${({ theme }) => theme.radii.lg};
+  background: ${({ theme }) => theme.alpha(theme.colors.destructive.DEFAULT, 0.12)};
+  border: 1.5px solid ${({ theme }) => theme.colors.destructive.DEFAULT};
+  color: ${({ theme }) => theme.colors.destructive.DEFAULT};
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+`;
+
 type Mode = "search" | "claim" | "create";
 
 export const AddEstablishmentPage = () => {
@@ -106,7 +117,7 @@ export const AddEstablishmentPage = () => {
     try {
       if (mode === "claim" && selected) {
         await claimEstablishment(selected.id, values);
-        toast.success("Establishment claimed and updated");
+        toast.success("Establishment confirmed and added to your profile");
       } else if (draftId) {
         await submitDraftEstablishment(draftId, values);
         toast.success("Establishment submitted for review");
@@ -137,17 +148,24 @@ export const AddEstablishmentPage = () => {
           {mode === "search" && (
             <>
               <EstablishmentSearchInput value={query} onChange={setQuery} onSelect={handleSelect} />
-              <Divider>or</Divider>
-              <Button type="button" variant="outline" fullWidth onClick={() => setMode("create")}>
-                Register as a New Establishment
-              </Button>
+              {query.trim().length > 0 && (
+                <>
+                  <Divider>or</Divider>
+                  <Button type="button" variant="outline" fullWidth onClick={() => setMode("create")}>
+                    Register as a New Establishment
+                  </Button>
+                </>
+              )}
             </>
           )}
 
           {mode === "claim" && isLoadingRecord && <PageLoader title="Loading establishment details..." />}
 
           {mode === "claim" && fullRecord && (
-            <EstablishmentForm defaultValues={toFormDefaults(fullRecord)} onSubmit={handleSubmit} submitLabel="Claim & Save" />
+            <>
+              <ExistsBanner>This establishment exists, kindly confirm the information below is correct</ExistsBanner>
+              <EstablishmentForm defaultValues={toFormDefaults(fullRecord)} onSubmit={handleSubmit} submitLabel="Confirm" />
+            </>
           )}
 
           {mode === "create" && (

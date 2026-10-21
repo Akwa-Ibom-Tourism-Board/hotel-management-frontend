@@ -474,9 +474,11 @@ export const CategoryStatTable = ({
             ))}
           </Select>
         </AddSelectWrap>
-        <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled || !pendingCategory}>
-          <Plus size={15} /> Add Category
-        </Button>
+        {pendingCategory && (
+          <Button type="button" variant="outline" size="sm" onClick={handleAdd} disabled={disabled}>
+            <Plus size={15} /> Add Category
+          </Button>
+        )}
       </AddRow>
       </DesktopOnly>
 

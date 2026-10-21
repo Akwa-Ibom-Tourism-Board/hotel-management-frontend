@@ -18,6 +18,7 @@ export interface SectionsSummary {
   wageStats: { reportingYear: number; status: SectionStatus }[];
   guestArrivalStats: { reportingYear: number; status: SectionStatus }[];
   occupancyStats: { reportingYear: number; status: SectionStatus }[];
+  roomRates: { reportingYear: number; status: SectionStatus }[];
 }
 
 // -- Accommodation -----------------------------------------------------
@@ -112,15 +113,14 @@ export interface WageStatsData {
   reportingYear: number;
   status: SectionStatus;
   employeesPaidCount: number | null;
-  totalWageSalary: number | null;
-  averageMonthlyWage: number;
+  minimumMonthlySalaryGross: number | null;
 }
 
 export interface WageStatsPayload {
   reportingYear: number;
   status: SectionStatus;
   employeesPaidCount?: number | null;
-  totalWageSalary?: number | null;
+  minimumMonthlySalaryGross?: number | null;
 }
 
 // -- Guest arrival statistics ---------------------------------------------
@@ -165,6 +165,35 @@ export interface OccupancyPayload {
   roomNightsAvailable?: number | null;
   roomNightsSold?: number | null;
   totalGuestNights?: number | null;
+}
+
+// -- Rates of rooms per year ------------------------------------------------
+// Room categories are owned by Accommodation; this section only adds a rate
+// per existing category per year, never a new category.
+
+export interface RoomRateCategory {
+  accommodationCategoryId: string;
+  category: string;
+  categoryLabel: string;
+  rate: number | null;
+  status: SectionStatus;
+}
+
+export interface RoomRatesData {
+  reportingYear: number;
+  hasRoomTypes: boolean;
+  categories: RoomRateCategory[];
+}
+
+export interface RoomRateInput {
+  accommodationCategoryId: string;
+  rate?: number | null;
+}
+
+export interface RoomRatesPayload {
+  reportingYear: number;
+  status: SectionStatus;
+  rates: RoomRateInput[];
 }
 
 // -- Shared category-table row shape (Accommodation + Employment) ---------

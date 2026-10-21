@@ -11,6 +11,7 @@ import { EmploymentStatsSection } from "./EmploymentStatsSection";
 import { WageStatsSection } from "./WageStatsSection";
 import { GuestArrivalsSection } from "./GuestArrivalsSection";
 import { OccupancySection } from "./OccupancySection";
+import { RoomRatesSection } from "./RoomRatesSection";
 import { YearTabs } from "./YearTabs";
 import { PanelWrap, PanelHeading, PanelTitle, PanelSubtitle, ErrorText } from "./SectionsPanel.styles";
 
@@ -28,8 +29,8 @@ const toYearStatusMap = (entries: { reportingYear: number; status: SectionStatus
   }, {});
 
 export const SectionsPanel = ({ establishmentId, entityType }: SectionsPanelProps) => {
-  // Accommodation and occupancy only apply to hotel-type establishments;
-  // every other entity type still reports employment, wages and arrivals.
+  // Sections only apply to hotels for now — every other entity type gets
+  // nothing here.
   const isHotel = entityType === "hotel";
 
   const years = useMemo(() => getReportingYears(), []);
@@ -45,20 +46,26 @@ export const SectionsPanel = ({ establishmentId, entityType }: SectionsPanelProp
   } = useQuery({
     queryKey: ["sections-summary", establishmentId],
     queryFn: () => getSectionsSummary(establishmentId),
+    enabled: isHotel,
   });
 
   const employmentStatusByYear = useMemo(() => toYearStatusMap(summary?.employmentStats ?? []), [summary]);
   const wageStatusByYear = useMemo(() => toYearStatusMap(summary?.wageStats ?? []), [summary]);
   const guestArrivalStatusByYear = useMemo(() => toYearStatusMap(summary?.guestArrivalStats ?? []), [summary]);
   const occupancyStatusByYear = useMemo(() => toYearStatusMap(summary?.occupancyStats ?? []), [summary]);
+  const roomRatesStatusByYear = useMemo(() => toYearStatusMap(summary?.roomRates ?? []), [summary]);
 
-  // A single year-tab row drives all four yearly sections below it; its dot
+  // A single year-tab row drives all the yearly sections below it; its dot
   // for a given year combines their statuses so one tab can still mean
-  // something, rather than tracking four independent year pickers.
+  // something, rather than tracking five independent year pickers.
   const combinedStatusByYear = useMemo(() => {
-    const sources: YearStatusMap[] = isHotel
-      ? [employmentStatusByYear, wageStatusByYear, guestArrivalStatusByYear, occupancyStatusByYear]
-      : [employmentStatusByYear, wageStatusByYear, guestArrivalStatusByYear];
+    const sources: YearStatusMap[] = [
+      employmentStatusByYear,
+      wageStatusByYear,
+      guestArrivalStatusByYear,
+      occupancyStatusByYear,
+      roomRatesStatusByYear,
+    ];
 
     return years.reduce<YearStatusMap>((acc, year) => {
       const statuses = sources.map((source) => source[year]).filter((value): value is SectionStatus => Boolean(value));
@@ -71,7 +78,10 @@ export const SectionsPanel = ({ establishmentId, entityType }: SectionsPanelProp
       }
       return acc;
     }, {});
-  }, [years, isHotel, employmentStatusByYear, wageStatusByYear, guestArrivalStatusByYear, occupancyStatusByYear]);
+  }, [years, employmentStatusByYear, wageStatusByYear, guestArrivalStatusByYear, occupancyStatusByYear, roomRatesStatusByYear]);
+
+  // Sections are hotel-only for now.
+  if (!isHotel) return null;
 
   return (
     <PanelWrap>
@@ -88,17 +98,15 @@ export const SectionsPanel = ({ establishmentId, entityType }: SectionsPanelProp
 
       {summary && (
         <>
-          {isHotel && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Accommodation</CardTitle>
-                <CardDescription>Rooms and beds by category. This does not change by reporting year.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AccommodationSection establishmentId={establishmentId} status={summary.accommodation.status} />
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle>Accommodation</CardTitle>
+              <CardDescription>Rooms and beds by category. This does not change by reporting year.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AccommodationSection establishmentId={establishmentId} status={summary.accommodation.status} />
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -157,21 +165,33 @@ export const SectionsPanel = ({ establishmentId, entityType }: SectionsPanelProp
             </CardContent>
           </Card>
 
-          {isHotel && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Occupancy and Guest-Night Statistics</CardTitle>
-                <CardDescription>Room nights and occupancy rate.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <OccupancySection
-                  establishmentId={establishmentId}
-                  year={selectedYear}
-                  status={occupancyStatusByYear[selectedYear]}
-                />
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardHeader>
+              <CardTitle>Occupancy and Guest-Night Statistics</CardTitle>
+              <CardDescription>Room nights and occupancy rate.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <OccupancySection
+                establishmentId={establishmentId}
+                year={selectedYear}
+                status={occupancyStatusByYear[selectedYear]}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Rates of Rooms per Year</CardTitle>
+              <CardDescription>A rate for each room category, per reporting year.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RoomRatesSection
+                establishmentId={establishmentId}
+                year={selectedYear}
+                status={roomRatesStatusByYear[selectedYear]}
+              />
+            </CardContent>
+          </Card>
         </>
       )}
     </PanelWrap>

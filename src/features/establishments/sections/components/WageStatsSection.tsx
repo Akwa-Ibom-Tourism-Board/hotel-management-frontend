@@ -32,12 +32,12 @@ export const WageStatsSection = ({ establishmentId, year, status }: WageStatsSec
   });
 
   const [employeesPaidCount, setEmployeesPaidCount] = useState("");
-  const [totalWageSalary, setTotalWageSalary] = useState("");
+  const [minimumMonthlySalaryGross, setMinimumMonthlySalaryGross] = useState("");
   const [savingStatus, setSavingStatus] = useState<SectionStatus | null>(null);
 
   useEffect(() => {
     setEmployeesPaidCount(data?.employeesPaidCount != null ? String(data.employeesPaidCount) : "");
-    setTotalWageSalary(data?.totalWageSalary != null ? String(data.totalWageSalary) : "");
+    setMinimumMonthlySalaryGross(data?.minimumMonthlySalaryGross != null ? String(data.minimumMonthlySalaryGross) : "");
   }, [data]);
 
   const handleSave = async (nextStatus: SectionStatus) => {
@@ -47,7 +47,7 @@ export const WageStatsSection = ({ establishmentId, year, status }: WageStatsSec
         reportingYear: year,
         status: nextStatus,
         employeesPaidCount: employeesPaidCount === "" ? null : Number(employeesPaidCount),
-        totalWageSalary: totalWageSalary === "" ? null : Number(totalWageSalary),
+        minimumMonthlySalaryGross: minimumMonthlySalaryGross === "" ? null : Number(minimumMonthlySalaryGross),
       });
       toast.success(nextStatus === "complete" ? "Wage and salary statistics marked as complete" : "Wage and salary statistics saved as draft");
       queryClient.invalidateQueries({ queryKey });
@@ -82,23 +82,16 @@ export const WageStatsSection = ({ establishmentId, year, status }: WageStatsSec
           />
         </FormField>
 
-        <FormField label="Total Wage-Salary" optional>
+        <FormField label="Minimum Monthly Salary (Gross)" optional>
           <CurrencyInputWrap>
             <CurrencyPrefix>₦</CurrencyPrefix>
             <Input
               type="number"
               min={0}
-              value={totalWageSalary}
-              onChange={(e) => setTotalWageSalary(e.target.value)}
+              value={minimumMonthlySalaryGross}
+              onChange={(e) => setMinimumMonthlySalaryGross(e.target.value)}
               disabled={isSaving}
             />
-          </CurrencyInputWrap>
-        </FormField>
-
-        <FormField label="Average Monthly Wage" hint="Calculated automatically from the fields above.">
-          <CurrencyInputWrap>
-            <CurrencyPrefix>₦</CurrencyPrefix>
-            <Input type="text" readOnly value={(data?.averageMonthlyWage ?? 0).toLocaleString()} />
           </CurrencyInputWrap>
         </FormField>
       </FieldGrid>

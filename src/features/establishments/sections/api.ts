@@ -11,6 +11,8 @@ import type {
   GuestArrivalsPayload,
   OccupancyData,
   OccupancyPayload,
+  RoomRatesData,
+  RoomRatesPayload,
 } from "./types";
 
 export const getSectionsSummary = async (establishmentId: string): Promise<SectionsSummary> => {
@@ -74,5 +76,15 @@ export const getOccupancy = async (establishmentId: string, year: number): Promi
 
 export const updateOccupancy = async (establishmentId: string, payload: OccupancyPayload): Promise<OccupancyData> => {
   const { data } = await httpClient.put(`/establishments/${establishmentId}/occupancy`, payload);
+  return data.data;
+};
+
+export const getRoomRates = async (establishmentId: string, year: number): Promise<RoomRatesData> => {
+  const { data } = await httpClient.get(`/establishments/${establishmentId}/room-rates`, { params: { year } });
+  return data.data;
+};
+
+export const updateRoomRates = async (establishmentId: string, payload: RoomRatesPayload): Promise<RoomRatesData> => {
+  const { data } = await httpClient.put(`/establishments/${establishmentId}/room-rates`, payload);
   return data.data;
 };
