@@ -28,6 +28,7 @@ export const OtpLoginForm = ({ onSubmittingChange }: OtpLoginFormProps) => {
   const location = useLocation();
   const [stage, setStage] = useState<"request" | "verify">("request");
   const [email, setEmail] = useState("");
+  const [isResending, setIsResending] = useState(false);
 
   const requestForm = useForm<EmailValues>({ resolver: zodResolver(emailSchema) });
   const otpForm = useForm<OtpValues>({ resolver: zodResolver(otpSchema), defaultValues: { email: "", otp: "" } });
@@ -60,6 +61,18 @@ export const OtpLoginForm = ({ onSubmittingChange }: OtpLoginFormProps) => {
     }
   };
 
+  const handleResend = async () => {
+    setIsResending(true);
+    try {
+      await requestLoginOtp({ email });
+      toast.success("A new login code has been sent to your email");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not resend login code");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   if (stage === "verify") {
     return (
       <>
@@ -77,10 +90,21 @@ export const OtpLoginForm = ({ onSubmittingChange }: OtpLoginFormProps) => {
           </Button>
         </form>
         <div style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.8125rem" }}>
+          Did not get a code?{" "}
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={isSubmitting || isResending}
+            style={{ background: "none", border: "none", color: "#FE6301", fontWeight: 600, cursor: "pointer", padding: 0 }}
+          >
+            {isResending ? "Sending..." : "Resend code"}
+          </button>
+        </div>
+        <div style={{ textAlign: "center", marginTop: "0.5rem", fontSize: "0.8125rem" }}>
           <button
             type="button"
             onClick={() => setStage("request")}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isResending}
             style={{ background: "none", border: "none", color: "#FE6301", fontWeight: 600, cursor: "pointer", padding: 0 }}
           >
             Use a different email
