@@ -29,7 +29,9 @@ export const BulkAddEstablishmentsPage = () => {
   const handleSubmit = async (values: BulkAddFormSchema) => {
     try {
       const created = await bulkCreateEstablishments(values);
-      toast.success(`${created.length} establishment${created.length === 1 ? "" : "s"} submitted for review`);
+      toast.success(
+        `${created.length} establishment${created.length === 1 ? "" : "s"} submitted for review. Check your email for links to fill out their sections.`,
+      );
       navigate("/dashboard/establishments");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not submit this batch, please try again.");

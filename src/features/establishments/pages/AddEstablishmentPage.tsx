@@ -117,13 +117,13 @@ export const AddEstablishmentPage = () => {
     try {
       if (mode === "claim" && selected) {
         await claimEstablishment(selected.id, values);
-        toast.success("Establishment confirmed and added to your profile");
+        toast.success("Establishment confirmed and added to your profile. Check your email for a link to fill out its sections.");
       } else if (draftId) {
         await submitDraftEstablishment(draftId, values);
-        toast.success("Establishment submitted for review");
+        toast.success("Establishment submitted for review. Check your email for a link to fill out its sections.");
       } else {
         await createEstablishment(values);
-        toast.success("Establishment registered");
+        toast.success("Establishment registered. Check your email for a link to fill out its sections.");
       }
       navigate("/dashboard/establishments");
     } catch (error) {
